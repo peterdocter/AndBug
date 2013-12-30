@@ -11,6 +11,7 @@
 ##
 ## You should have received a copy of the GNU Lesser General Public License
 ## along with AndBug.  If not, see <http://www.gnu.org/licenses/>.
+#test
 
 from distutils.core import setup, Extension, Command
 
