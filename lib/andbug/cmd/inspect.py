@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*- 
+
 ## Copyright 2011, Felipe Barriga Richards <spam@felipebarriga.cl>.
 ##                 All rights reserved.
 ##
@@ -21,8 +24,9 @@ def find_object(ctxt, oid):
     for t in ctxt.sess.threads():
         for f in t.frames:
             for k, v in f.values.items():
+                print "In inspect.find_object k=" + str(k) + "\t v=" + str(v)
                 if type(v) is andbug.vm.Object and v.oid == oid:
-                    return (v, t)
+                    return (v, t)   #v：变量的值， t：所在的线程信息
     return None
 
 @andbug.command.action('<object-id>')
@@ -39,7 +43,9 @@ def inspect(ctxt, oid):
             obj, thread = rtval
             with andbug.screed.section('object <%s> %s in %s'
                 % (str(obj.oid), str(obj.jni), str(thread))):
+                print "In inspect obj.oid=" +  str(obj.oid) + "\t jni=" + str(obj.jni) + "\t thread=" + str(thread)
                 for k, v in obj.fields.items():
+                    print "In inspect k=" +  str(k) + "\t v=" + str(v) + "\t type=" + type(v).__name__
                     andbug.screed.item('%s=%s <%s>' % (k, v, type(v).__name__))
     except ValueError:
         print('!! error, invalid oid param. expecting <long> and got <%s>.'

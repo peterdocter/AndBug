@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*- 
+
 ## Copyright 2011, IOActive, Inc. All rights reserved.
 ##
 ## AndBug is free software: you can redistribute it and/or modify it under 
@@ -12,6 +15,7 @@
 ## You should have received a copy of the GNU Lesser General Public License
 ## along with AndBug.  If not, see <http://www.gnu.org/licenses/>.
 
+#被类的作用在于进行格式化输出，目的在于和用户交互，目前是在shell中
 '''
 Screed (plural Screeds)
 
@@ -19,9 +23,9 @@ Screed (plural Screeds)
 2. A piece of writing.
 3. A tool, usually a long strip of wood or other material, for producing a smooth, flat surface on, for example, a concrete floor or a plaster wall.
 4. A smooth flat layer of concrete or similar material.
-5. A python module for formatting text output
+5. A python module for formatting text output ***
 
-Written language has evolved concurrent with the advent of movable type and
+Written language has evolved(发展) concurrent（并发） with the advent（来临） of movable（变动） type and
 the information age, introducing a number of typographic conventions that are
 used to impose structure.  The Screed format employs a subset of these 
 conventions to structure output in way that is easily parsed by software or 
@@ -35,13 +39,16 @@ import textwrap
 import sys
 import subprocess
 import re
-import andbug.log
+#import andbug.log
+import log
 
-rx_blocksep = re.compile('[\r\n][ \t]*[\r\n]+')
+
+#用于正则表达式
+rx_blocksep = re.compile('[\r\n][ \t]*[\r\n]+')  
 rx_linesep = re.compile('[\r\n][ \t]*')
 
 def body(data):
-    blocks = rx_blocksep.split(data.strip())
+    blocks = rx_blocksep.split(data.strip()) #strip函数除去字符串首尾的空格
 
     for block in blocks:
         block = block.strip()
@@ -51,12 +58,13 @@ def body(data):
             item(block[3:])
         else:
             text(block)
-
+#运行tput linux命令， 用来实现和用户的复杂交流，如光标的移动和输出数据颜色的变化 self.width = tput('cols', self.width)
 def tput(attr, alt=None):
-    p = subprocess.Popen(('tput', attr), stdout=subprocess.PIPE, stderr=None)
+    p = subprocess.Popen(('tput', attr), stdout=subprocess.PIPE, stderr=None) 
     p.wait()
     if p.returncode:
         return alt
+
     o, _ = p.communicate()
     return int(o)
 
@@ -76,6 +84,15 @@ class area(object):
         pass
     def create(self):
         pass
+'''
+__init__、 __enter__、 __exit__ 三个函数是object默认定义的。
+三个函数的作用分别是：class声明是调用__init__
+进入with指令时，调用__enter__函数
+跳出with指令时，调用__exit__函数
+
+而enter、exit、create函数不是python原有函数，是自定义的用来被上面调用的函数
+'''   
+    
 
 class section(area):
     def create(self):
@@ -124,9 +141,9 @@ class surface(object):
         if output is None:
             output = sys.stdout
         self.output = output
-        self.tty = self.output.isatty()
+        self.tty = self.output.isatty() #istty判断文件是否是一个终端设备文件
         self.indent = []
-        self.textwrap = textwrap.TextWrapper()
+        self.textwrap = textwrap.TextWrapper() #文本包装和填充
 
     def __call__(self):
         return self
@@ -178,7 +195,8 @@ class surface(object):
             width -= 13 # overhead
             width = width / 4 # dd_c
 
-        hex = andbug.log.format_hex(data, self.current_indent, width)
+        #hex = andbug.log.format_hex(data, self.current_indent, width)
+        hex = log.format_hex(data, self.current_indent, width)   #函数的定义
         self.write(hex)
         self.newline()
 
@@ -230,6 +248,7 @@ class scheme(object):
         if not depth: return ''
         return (self.c256 if (depth == 256) else self.c16).get(tag, '\x1B[0m')
 
+#定义显示的方式
 redmedicine = scheme((
     ('##',  9,  69),
     ('--', 15, 254),
@@ -254,7 +273,7 @@ class ascii(surface):
         self.prev_tag = ''
         self.palette = palette
 
-    def transition(self, next):
+    def transition(self, next): #转换
         prev = self.prev_tag
         self.prev_tag = next
         #print "TRANSITION", repr(prev), "->", repr(next)
@@ -273,7 +292,7 @@ class ascii(surface):
             self.newline()
             self.prev_tag = '00'
 
-    def create_section(self, title):
+    def create_section(self, title): #section［部分］
         self.create_tagged_area( '##', title)
 
     def enter_section(self, title):
@@ -282,7 +301,7 @@ class ascii(surface):
     def exit_section(self, title):
         self.exit_tagged_area()
 
-    def create_item(self, title):
+    def create_item(self, title): #item［项目］
         self.create_tagged_area( '--', title)
 
     def enter_item(self, title):
@@ -291,7 +310,7 @@ class ascii(surface):
     def exit_item(self, title):
         self.exit_tagged_area()
 
-    def create_meta(self, title):
+    def create_meta(self, title):#meta［元的］
         self.create_tagged_area( '//', title)
 
     def enter_meta(self, title):
@@ -300,7 +319,7 @@ class ascii(surface):
     def exit_meta(self, title):
         self.exit_tagged_area()
 
-    def create_refer(self, title):
+    def create_refer(self, title):#refer［涉及］
         self.create_tagged_area( '::', title)
 
     def enter_refer(self, title):
@@ -321,7 +340,7 @@ class ascii(surface):
         tag += ' '
         self.next_indent = self.current_indent + ' ' * len(tag)
         self.wrap_line(self.current_indent + tag + banner, self.next_indent)
-        self.write("\x1B[0m")
+        self.write("\x1B[0m")  #待输入提示符号“>>”
 
     def enter_tagged_area(self):
         self.push_indent(self.next_indent)
@@ -335,11 +354,11 @@ class ascii(surface):
         if self.prev_tag != '00':
             self.prev_tag = next
         #print 'EXIT ->', repr(self.prev_tag)
-
+    #获取终端的相关信息
     def pollcap(self):
         if not self.tty: return
-        self.width = tput('cols', self.width)
-        self.depth = tput('colors', self.depth)        
+        self.width = tput('cols', self.width)  #显示终端的列数，def tput(attr, alt=None):
+        self.depth = tput('colors', self.depth)  #获取终端的颜色信息      
         self.textwrap.width = self.width
 
 OUTPUT = None
@@ -351,12 +370,14 @@ def scheme():
     else:
         return PALETTE
 
-def output():
+def output(): #output函数返回的是一个ascii类
     global OUTPUT
     if OUTPUT is None:
         OUTPUT = ascii(palette=scheme())
     return OUTPUT
 
+	
+#用于测试的函数
 if __name__ == '__main__':
     with section('Introduction'):
         text('''Since the sentence detection algorithm relies on string.lowercase for the definition of lowercase letter, and a convention of using two spaces after a period to separate sentences on the same line, it is specific to English-language texts.''')
@@ -365,6 +386,11 @@ if __name__ == '__main__':
         item('''String that will be prepended to the first line of wrapped output. Counts towards the length of the first line.''')
         text('''this is some inbetween text''')
         item('''This is a much shorter item.''')
+        item('''This is a much shorter item.''')
+        meta('''1111111111111''')
+        meta('''1111111111111''')
+        refer('''11111111111111111111111111111111111''')
+        
     with section('Data'):
         dump(open('/dev/urandom').read(1024))
     with section('Conclusion'):

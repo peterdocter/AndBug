@@ -20,6 +20,10 @@
 import andbug.command, andbug.screed, andbug.options
 from Queue import Queue
 
+'''
+该命令用来跟踪触发断点时各参数的信息
+'''
+
 def parse_frame_detail(frame):
     '''
     函数功能：解析一个堆栈帧的详细情况
@@ -42,8 +46,10 @@ def report_hit(t):
             name = str(f.loc)
             if f.native:  #判断堆栈中函数的类型，是否是内部函数。如dalvik.system.NativeStart.main([Ljava/lang/String;)V <native>
                 name += ' <native>'
-            andbug.screed.item(name)
-
+            with andbug.screed.refer(name):
+                parse_frame_detail(f)
+               
+               
 def cmd_break_methods(ctxt, cpath, mpath):
     for c in ctxt.sess.classes(cpath):
         for m in c.methods(mpath):
@@ -51,51 +57,26 @@ def cmd_break_methods(ctxt, cpath, mpath):
             if l.native:  #等于true，无法设置断点
                 andbug.screed.item('Could not hook native %s' % l)
                 continue
-            h = l.hook(func = report_hit)
-            andbug.screed.item('Hooked %s' % h)
+            l.hook(func = report_hit) #调用断点设置函数
+            andbug.screed.item('Hooked %s' % l)
 
 def cmd_break_classes(ctxt, cpath):
     for c in ctxt.sess.classes(cpath): #c为vm.py中，Class类的一个对象
-        h = c.hookEntries(func = report_hit)
-        andbug.screed.item('Hooked %s' % h)
-
-def cmd_break_line(ctxt, cpath, mpath, line):
-    for c in ctxt.sess.classes(cpath):
-        for m in c.methods(mpath):
-            l = m.lineTable
-            if l is None or len(l) <= 0:
-                continue
-            if line == 'show':
-                andbug.screed.item(str(sorted(l.keys())))
-                continue
-            l = l.get(line, None)
-            if l is None:
-                andbug.screed.item("can't found line %i" % line)
-                continue
-            if l.native:
-                andbug.screed.item('Could not hook native %s' % l)
-                continue
-            h = l.hook(func = report_hit)
-            andbug.screed.item('Hooked %s' % h)
+        c.hookEntries(func = report_hit)
+        andbug.screed.item('Hooked %s' % c)
 
 @andbug.command.action(
-    '<class> [<method>] [show/lineNo]', name='break', aliases=('b',), shell=True
+    '<class> [<method>]', name='break-detail', aliases=('b',), shell=True
 )
-def cmd_break(ctxt, cpath, mquery=None, line=None):
-    'set breakpoint'
+def cmd_break(ctxt, cpath, mquery=None):
+    'suspends the process when a method is called'
     cpath, mname, mjni = andbug.options.parse_mquery(cpath, mquery)
     #print "cpath=" + cpath + "\t mname=" + mname + "\t mjni=" + mjni 
     #输出的结果是：cpath=Lcom/example/test/MainActivity$1;     mname=onClick     mjni=(Landroid/view/View;)V
-    if line is not None:
-        if line != 'show':
-            line = int(line)
-
     with andbug.screed.section('Setting Hooks'):
         if mname is None:
             cmd_break_classes(ctxt, cpath)
-        elif line is None:
-            cmd_break_methods(ctxt, cpath, mname)
         else:
-            cmd_break_line(ctxt, cpath, mname, line)
+            cmd_break_methods(ctxt, cpath, mname)
 
     ctxt.block_exit()

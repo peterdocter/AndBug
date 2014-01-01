@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*- 
 
 ## TODO: expand the forest to use <slot>, <info>, <more>
 ## TODO: add <value> browser
@@ -7,7 +8,8 @@
 ## TODO: add close button to popouts
 ## TODO: add static class list
 
-import andbug, os.path, json, subprocess, threading
+import andbug, os.path, cgi, json, subprocess, threading
+from urllib2 import quote as urlquote
 import re
 
 try:
@@ -288,7 +290,7 @@ def view_slot(tid, fid, key, path=None):
 # frame stacks.  This is consolidated into one data structure to reduce
 # round trip latency.
 #############################################################################
-
+#seq_frame、seq_thread、seq_process实现数据展示的几个函数
 #TODO: INSULATE
 def seq_frame(frame, url):
     if not url.endswith('/'):
@@ -313,6 +315,8 @@ def seq_process():
         seq_thread(threads[i], '/t/%s/' % i) for i in range(len(threads))
     )
 
+
+#处理tt页面
 @bottle.route('/tt')
 def json_process():
     data = json.dumps(seq_process())
@@ -325,6 +329,7 @@ def json_process():
 # forest for efficiency.
 #############################################################################
 
+#处理首页面的函数
 @bottle.route('/')
 def frontend():
     return bottle.template('frontend', forest=json.dumps(seq_process()))

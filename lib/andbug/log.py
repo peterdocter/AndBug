@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*- 
+
 ## Copyright 2011, IOActive, Inc. All rights reserved.
 ##
 ## AndBug is free software: you can redistribute it and/or modify it under 
@@ -12,6 +15,14 @@
 ## You should have received a copy of the GNU Lesser General Public License
 ## along with AndBug.  If not, see <http://www.gnu.org/licenses/>.
    
+   
+#文件功能：实现日志记录的一些类功能：
+#对外提供一下函数接口：
+#def error(tag, meta, data = None)      输出错误信息
+#def info(tag, meta, data = None)		输出普通信息
+#def read_log(path=None, file=None)		读取日志信息
+
+   
 import os, sys, time
 from cStringIO import StringIO
 
@@ -19,9 +30,12 @@ def blocks(seq, sz):
     ofs = 0
     lim = len(seq)
     while ofs < lim:
-        yield seq[ofs:ofs+sz]
+        yield seq[ofs:ofs+sz]  #关键是yield的用法，现在理解的还不是很深入
         ofs += sz
-
+		
+#函数功能：
+#注释：censor 审查，检查
+#将传入的字符编程可打印字符，对于传入的不可打印字符，用“.”表示
 def censor(seq):
     for ch in seq:
         if ch < '!': 
@@ -31,16 +45,18 @@ def censor(seq):
         else:
             yield ch
 
+
+#函数功能：以十六制形式输出数据【猜测】
 def format_hex(data, indent="", width=16, out=None):
     if out == None:
-        out = StringIO()
+        out = StringIO()  #StringIO经常被用来作为字符串的缓存，应为StringIO有个好处，他的有些接口和文件操作是一致的，也就是说用同样的代码，可以同时当成文件操作或者StringIO操作
         strout = True
     else:
         strout = False
 
     indent += "%08x:  "
     ofs = 0
-    for block in blocks(data, width):
+    for block in blocks(data, width): #将一个字符串按照指定的长度分成多个字符串段
         out.write(indent % ofs)
         out.write(' '.join(map(lambda x: x.encode('hex'), block)))
         if len(block) < width:
@@ -61,7 +77,7 @@ def parse_hex(dump, out=None):
         strout = False
 
     for row in dump.splitlines():
-        row = row.strip().split('  ')
+        row = row.strip().split('  ')  #strip函数用于去掉字符串中开始和结束的字符
         block = row[1].strip().split(' ')
         block = ''.join(map(lambda x: chr(int(x, 16)), block))
         out.write(block)
@@ -88,6 +104,7 @@ class LogWriter(object):
         
     def writeEvent(self, evt):
         self.file.write(str(evt))
+        self.file.flush()
 
 class LogReader(object):
     def __init__(self, file=sys.stdin):
@@ -96,7 +113,7 @@ class LogReader(object):
     
     def readLine(self):
         if self.last is None:
-            line = self.file.readline().rstrip()
+            line = self.file.readline().rstrip()  #rstrip()用来在字符串末尾删除某个字符
         else:
             line = self.last
             self.last = None
@@ -130,16 +147,30 @@ class LogReader(object):
 
         return LogEvent(time, tag, meta, data)
 
-stderr = LogWriter(sys.stderr)
-stdout = LogWriter(sys.stdout)
+cur_path = os.getcwd()
+err_file = open(cur_path + os.path.sep + "err.log", "a")
+infor_file = open(cur_path + os.path.sep + "infor.log", "a")
+debug_file = open(cur_path + os.path.sep + "debug.log", "a")
+stderr = LogWriter(err_file)
+stdout = LogWriter(infor_file)
+stdebug = LogWriter(debug_file)
 
 def error(tag, meta, data = None):
     now = int(time.time())
     stderr.writeEvent(LogEvent(now, tag, meta, data))
 
 def info(tag, meta, data = None):
-    now = int(time.time())
+    #now = int(time.time())
+    now = time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
+    now +="(%f)" %(time.time())
     stdout.writeEvent(LogEvent(now, tag, meta, data))
+
+def debug(tag, meta, data=None):    
+    now = time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
+    now +="(%f)" %(time.time())
+    #now = int(time.time())
+    stdebug.writeEvent(LogEvent(now, tag, meta, data))
+    
 
 def read_log(path=None, file=None):
     if path is None:
@@ -148,3 +179,26 @@ def read_log(path=None, file=None):
         else:
             reader = LogReader(file)
     return reader
+
+
+def debug_infor (infor, filepath="/home/anbc/workspace/log/debug_infor.txt"):
+    '''
+        add by anbc for debug the program
+    '''
+    file_object = open(filepath, 'a')
+    file_object.write(infor+"\r\n")
+    file_object.close( )
+
+
+def main():
+    print 'start'    
+
+    debug("test", "infor")
+   
+    
+    print 'end' 
+
+    
+
+if __name__ == '__main__':
+    main()     

@@ -45,12 +45,18 @@
 extern char* jdwp_en_errors[];
 
 /** represents an active JDWP buffer and associated state */
+/*
+cap 能容纳的buf的长度
+len 当前使用的长度
+ofs 已经取出的字节的长度
+data 所保存的数据的指针
+*/
 typedef struct {
-	uint8_t fSz;
-	uint8_t mSz;
-	uint8_t oSz;
-	uint8_t tSz;
-	uint8_t sSz;
+	uint8_t fSz; //field ID size
+	uint8_t mSz; //method ID size
+	uint8_t oSz; //object ID size
+	uint8_t tSz; //reference Type ID size
+	uint8_t sSz; //frame ID size
 	int ofs, len, cap;
 	char* data;
 } jdwp_buffer;

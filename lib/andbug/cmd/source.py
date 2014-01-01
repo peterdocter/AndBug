@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*- 
+
 ## Copyright 2011, IOActive, Inc. All rights reserved.
 ##
 ## AndBug is free software: you can redistribute it and/or modify it under 

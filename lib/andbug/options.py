@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*- 
+
 ## Copyright 2011, IOActive, Inc. All rights reserved.
 ##
 ## AndBug is free software: you can redistribute it and/or modify it under 
@@ -12,6 +15,8 @@
 ## You should have received a copy of the GNU Lesser General Public License
 ## along with AndBug.  If not, see <http://www.gnu.org/licenses/>.
 
+import sys
+
 class ParseError(Exception):
     def __init__(self, reason, option):
         self.reason = reason
@@ -21,11 +26,14 @@ class ParseError(Exception):
         return '%s: %r.' % (self.reason, self.option)
 
 def parse_cpath(path):
-	if path.startswith('L') and path.endswith(';') and ('.' not in path):
+    '''
+    函数功能：对类路径进行解析
+    '''
+    if path.startswith('L') and path.endswith(';') and ('.' not in path):
 		return path
-	elif path.startswith('L') or path.endswith(';') or ('/' in path):
+    elif path.startswith('L') or path.endswith(';') or ('/' in path):
 		raise ParseError('could not determine if path is a JNI or logical class path', path)
-	else:
+    else:
 		return'L' + path.replace('.', '/') + ';'
 
 def parse_mspec(mspec):

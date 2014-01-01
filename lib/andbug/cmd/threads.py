@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*- 
+
 ## Copyright 2011, IOActive, Inc. All rights reserved.
 ##
 ## AndBug is free software: you can redistribute it and/or modify it under 
@@ -44,10 +47,17 @@ def threads(ctxt, arg1 = None, arg2 = None):
         if param is None or param[:8] != 'verbose=':
             return False
 
-        verbosity = int(param[8:])
+        verbosity = int(param[8:]) #获取'verbose='后面的值
         return verbosity
 
-    def parse_args(arg1, arg2):
+    def parse_args(arg1, arg2): 
+        '''
+        函数功能：对参数进行解析，
+        注： 如果arg1为name，arg2为verbose，则返回(name, verbose)
+            如果arg1为name，arg2为None，则返回(name, 0)
+            如果arg1为verbose，arg2为None，则返回(None, verbose)
+            如果arg1为None，arg2为None，则返回(None, 0)
+        '''
         if arg1 is None:
             return (None, 0)
 
@@ -67,12 +77,12 @@ def threads(ctxt, arg1 = None, arg2 = None):
     ctxt.sess.suspend()
 
     try:
-        threads = sorted(ctxt.sess.threads(name).items, key=threadId)
+        threads = sorted(ctxt.sess.threads(name).items, key=threadId)  #对线程数据按照线程Id的值进行排序
 
-        for t in threads:
+        for t in threads: #逐个取出线程
             with andbug.screed.section(str(t)):
                 if verbose > 0:
-                    thread_methods(t, verbose)
+                    thread_methods(t, verbose)  #用以展示各线程当前的堆栈信息
     finally:
         ctxt.sess.resume()
         

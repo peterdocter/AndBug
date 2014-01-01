@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*- 
+
+
 ## Copyright 2011, IOActive, Inc. All rights reserved.
 ##
 ## AndBug is free software: you can redistribute it and/or modify it under 
@@ -22,6 +25,7 @@ BANNER = 'AndBug (C) 2011 Scott W. Dunlop <swdunlop@gmail.com>'
 def input():
     return raw_input('>> ')
 
+#在这里接收用户出入的每一个命令
 def completer(text, state):
     available_commands = andbug.command.ACTION_MAP.keys()
     options = [x for x in available_commands if x.startswith(text)]
@@ -29,8 +33,6 @@ def completer(text, state):
         return options[state]
     except IndexError:
         return None
-
-
 @andbug.command.action('')
 def shell(ctxt):
     'starts the andbug shell with the specified process'
@@ -52,4 +54,4 @@ def shell(ctxt):
             return
         andbug.screed.pollcap()
         if cmd:
-            andbug.command.run_command(cmd, ctxt=ctxt)
+            andbug.command.run_command(cmd, ctxt=ctxt) #在这里接收控制台输入的命令，实现具体的调试工作。

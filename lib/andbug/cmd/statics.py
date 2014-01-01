@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*- 
+
 ## Copyright 2011, IOActive, Inc. All rights reserved.
 ##
 ## AndBug is free software: you can redistribute it and/or modify it under 
@@ -20,7 +23,7 @@ import andbug.command, andbug.options
 def statics(ctxt, cpath):
     'lists the methods of a class'
     cpath = andbug.options.parse_cpath(cpath)
-    for c in ctxt.sess.classes(cpath):
+    for c in ctxt.sess.classes(cpath):  #c的类型为vm.Class类，它的父类型为RefType
         andbug.screed.section("Static Fields, %s" % c)
         for k, v in c.statics.iteritems():
-            andbug.screed.item("%s = %s" % (k, v))
+            andbug.screed.item("%s = %s" % (k, v)) #在这里会到用vm.String类中的__str__函数，进而调用data(self)发起"call jdwp 0x0A 01"命令

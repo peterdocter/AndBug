@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*- 
+
 ## Copyright 2011, IOActive, Inc. All rights reserved.
 ##
 ## AndBug is free software: you can redistribute it and/or modify it under 
@@ -19,12 +22,14 @@ import andbug.command, andbug.screed
 @andbug.command.action('[<name>]', shell=True)
 def resume(ctxt, name=None):
     'resumes threads in the process'
+    #针对整个虚拟机
     if name is None:
         ctxt.sess.resume()
         return andbug.screed.section('Process Resumed')
     elif name == '*':
         name = None
 
+    #针对单个线程
     with andbug.screed.section('Resuming Threads'):
         for t in ctxt.sess.threads(name):
             t.resume()

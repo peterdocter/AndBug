@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*- 
+
 ## Copyright 2011, IOActive, Inc. All rights reserved.
 ##
 ## AndBug is free software: you can redistribute it and/or modify it under 
@@ -48,6 +51,9 @@ def method_trace(ctxt, mpath):
     'reports calls to specific dalvik method'
 	
     cpath, mname, mjni = andbug.options.parse_mquery(".".join(mpath.split('.')[0:-1]),  mpath.split('.')[-1])
+    print "cpath=" + cpath
+    print "mname=" + mname
+    print "mjni=" + mjni
 
     with andbug.screed.section('Setting Hooks'):
 		cmd_hook_methods(ctxt, cpath, mname)

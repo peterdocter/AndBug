@@ -1,4 +1,7 @@
-## Copyright 2011, IOActive, Inc. All rights reserved.
+#!/usr/bin/env python
+# -*- coding: utf-8 -*- 
+ 
+ ## Copyright 2011, IOActive, Inc. All rights reserved.
 ##
 ## AndBug is free software: you can redistribute it and/or modify it under 
 ## the terms of version 3 of the GNU Lesser General Public License as 
@@ -28,14 +31,15 @@ def dump(ctxt, cpath, mquery=None):
     cpath, mname, mjni = andbug.options.parse_mquery(cpath, mquery)
     for method in ctxt.sess.classes(cpath).methods(name=mname, jni=mjni):
         source = False
+        #print "method.firstLoc.line="+ str(method.firstLoc.line)
         klass = method.klass.name           
 
-        first_line = method.firstLoc.line
+        first_line = method.firstLoc.line #对于com.example.test.MainActivity.test() first_line的值是33
         if first_line is None:
             print '!! could not determine first line of', method
             continue
         
-        source = andbug.source.load_source(klass)
+        source = andbug.source.load_source(klass) #用一个map类型保存源代码
         if not source:
             print '!! could not find source for', klass
             continue
@@ -45,4 +49,4 @@ def dump(ctxt, cpath, mquery=None):
             print '!! could not determine last line of', method
             continue
 
-        andbug.source.dump_source(source[first_line:last_line], str(method))
+        andbug.source.dump_source(source[first_line:last_line], str(method)) #将源代码输出

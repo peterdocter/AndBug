@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 ## Copyright 2011, IOActive, Inc. All rights reserved.
 ##
 ## AndBug is free software: you can redistribute it and/or modify it under 
@@ -11,7 +13,6 @@
 ##
 ## You should have received a copy of the GNU Lesser General Public License
 ## along with AndBug.  If not, see <http://www.gnu.org/licenses/>.
-#test
 
 from distutils.core import setup, Extension, Command
 
@@ -26,19 +27,24 @@ class TestCommand(Command):
     user_options = []
 
     def initialize_options(self):
-        self._dir = os.getcwd()
+        self._dir = os.getcwd()  #用来获得程序的当前环境
 
     def finalize_options(self):
         pass
 
     def run(self):
         testfiles = [ ]
+		#glob 获取指定目录的所有.py文件 
+		#splitext 函数用于分解文件名的扩展名
+		#basename() 去掉目录路径, 返回文件名
+		#b='.'.join('hello','world') 则b为“hello.world”
         for t in glob(pjoin(self._dir, 'tests', '*.py')):
             if not t.endswith('__init__.py'):
                 testfiles.append('.'.join(
                     ['tests', splitext(basename(t))[0]])
                 )
 
+		#使用测试框架进行测试的工作
         tests = TestLoader().loadTestsFromNames(testfiles)
         t = TextTestRunner(verbosity = 1)
         t.run(tests)
@@ -57,6 +63,7 @@ class CleanCommand(Command):
     def finalize_options(self):
         pass
 
+	#对“.pyc”文件进行删除
     def run(self):
         for clean_me in self._clean_me:
             try:

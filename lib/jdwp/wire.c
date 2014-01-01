@@ -57,6 +57,13 @@ char *jdwp_en_errors[] = {
 #define REQUIRE_CAP(n) if (jdwp_expand(buf, (n))) return JDWP_HEAP_FAULT;
 #define REQUIRE_LEN(n) if ((buf->len - buf->ofs) < n) return JDWP_NEED_LEN;
 
+/*
+函数功能：判断jdwp_buffer的buf是否可以满足长度要求，不满足则对buf进行扩展
+jdwp_buffer* buf 当前的buf的指针
+int req 所需要的空间的长度
+返回值：函数调用正常返回0，调用异常返回JDWP_HEAP_FAULT
+满足要求或扩展成功返回0，重新申请空间失败返回JDWP_HEAP_FAULT
+*/
 int jdwp_expand( jdwp_buffer* buf, int req ){
 	int cap = buf->cap;
 	req += buf->len;
@@ -73,6 +80,13 @@ again:
 	return 0;
 }
 
+/*
+函数功能：在jdwp_buffer存入字符串数据
+参数：	jdwp_buffer* buf  原buf结构体变量
+		uint32_t size	计划追加的字符串的长度
+		char* data 要存入的字符串指针
+返回值：返回0
+*/
 int jdwp_pack_str( jdwp_buffer* buf, uint32_t size, char* data ){
 	REQUIRE_CAP(size + 4);
 	jdwp_pack_u32(buf, size);
@@ -80,37 +94,53 @@ int jdwp_pack_str( jdwp_buffer* buf, uint32_t size, char* data ){
 	buf->len += size;
     return 0;
 }
-
+/*
+函数功能：在jdwp_buffer追加一个字节的数据
+参数：	jdwp_buffer* buf  原buf结构体变量		
+		uint8_t byte 增加的数据内容
+返回值：返回0
+*/
 int jdwp_pack_u8( jdwp_buffer* buf, uint8_t byte){
 	REQUIRE_CAP(1);
 	*(uint8_t*)(buf->data + buf->len) = byte;
 	buf->len += 1;
 	return 0;
 }
+
 int jdwp_pack_u16( jdwp_buffer* buf, uint16_t word ){
 	REQUIRE_CAP(2);
-	*(uint16_t*)(buf->data + buf->len) = htons(word);
+	*(uint16_t*)(buf->data + buf->len) = htons(word);  //改变字节排序
 	buf->len += 2;
 	return 0;
 }
+
 int jdwp_pack_u32( jdwp_buffer* buf, uint32_t quad ){
 	REQUIRE_CAP(4);
 	*(uint32_t*)(buf->data + buf->len) = htonl(quad);
 	buf->len += 4;
 	return 0;
 }
+
 int jdwp_pack_u64( jdwp_buffer* buf, uint64_t octet ){
 	REQUIRE_CAP(8);
 	*(uint64_t*)(buf->data + buf->len) = htonll(octet);
 	buf->len += 8;
 	return 0;
 }
+/*
+函数功能：从buf结构体中提取出一个字节的数据
+参数：	jdwp_buffer* buf  结构体数据
+		uint8_t* byte	保存提取出来的一个字节数据的指针变量
+返回值：返回0
+*/
 int jdwp_unpack_u8( jdwp_buffer* buf, uint8_t* byte){
 	REQUIRE_LEN(1);
 	*byte = *(uint8_t*)(buf->data + buf->ofs);
 	buf->ofs += 1;
 	return 0;
 }
+
+
 int jdwp_unpack_u16( jdwp_buffer* buf, uint16_t* word ){
 	REQUIRE_LEN(2);
 	*word = ntohs(*(uint16_t*)(buf->data + buf->ofs));
@@ -129,10 +159,11 @@ int jdwp_unpack_u64( jdwp_buffer* buf, uint64_t* octet ){
 	buf->ofs += 8;
 	return 0;
 }
+
 int jdwp_unpack_str( jdwp_buffer* buf, uint32_t *size, char** data ){
     uint32_t sz;
     int err = jdwp_unpack_u32(buf, &sz);
-    if (err) return err;
+    if (err) return err;  //没有作用，err的只永远是0，永远不会执行“return err;” 语句
     REQUIRE_LEN(sz);
     *size = sz;
     *data = buf->data + buf->ofs;
@@ -140,6 +171,13 @@ int jdwp_unpack_str( jdwp_buffer* buf, uint32_t *size, char** data ){
     return 0;
 }
 
+/*
+函数功能：添加一个id值到buf结构体中
+参数：	jdwp_buffer* buf buf变量的指针
+		uint64_t id 要保存的id的值
+		uint8_t sz  id数据准备占用buf中内存空间的长度
+返回值：添加成功返回0，否则返回JDWP_SZ_UNSUPPORTE
+*/
 int jdwp_pack_id( jdwp_buffer* buf, uint64_t id, uint8_t sz ){
 	switch (sz){
 	case 1:
@@ -171,17 +209,36 @@ int jdwp_unpack_id( jdwp_buffer* buf, uint64_t* id, uint8_t sz ){
 	}
 }
 
-int jdwp_prepare( jdwp_buffer* buf, char* data, int len ){
-	if (buf->data == NULL){
+
+/*
+函数功能：初始化一个jdwp buf的结构体
+参数：	jdwp_buffer* buf 目标buf结构体
+		char* data		准备加入buf的数据
+		int len		data数据的长度
+返回值：调用成功返回0，调用异常返回JDWP_HEAP_FAULT
+*/
+int jdwp_prepare( jdwp_buffer* buf, char* data, int len )
+{
+	if (buf->data == NULL)
+	{
+		//没有申请data空间，则在这里申请
 		buf->data = malloc(len);
-	}else if (len > buf->cap){
+	}
+	else if (len > buf->cap)
+	{
+		//申请了空间，但是buf能容纳的长度，小于当前要加入的数据的长度，则重新申请len长度的空间
 		buf->data = realloc(buf->data, len);
 	}; // we do not collapse the heap, ever.. call it a character flaw.
-	if (buf->data == NULL) return JDWP_HEAP_FAULT;
-	if (data == NULL){
+
+	if (buf->data == NULL) return JDWP_HEAP_FAULT;  //如果buf->data为NULL，则空间没有申请成功返回JDWP_HEAP_FAULT
+
+	if (data == NULL)
+	{
 		buf->len = 0;
 		// we also don't zeroize memory; also a character flaw.
-	}else{
+	}
+	else
+	{
 		memcpy(buf->data, data, len);
 		buf->len = len;
 	}
@@ -190,14 +247,29 @@ int jdwp_prepare( jdwp_buffer* buf, char* data, int len ){
 	return 0;
 }
 
-void jdwp_purge( jdwp_buffer* buf ){
+/*
+函数功能：净化jdwp_buffer结构体，将data中指向的内容空间释放
+参数：jdwp_buffer* buf 结构指针变量
+返回值：void
+*/
+void jdwp_purge( jdwp_buffer* buf )
+{
 	if (buf->data == NULL) return;
 	free(buf->data);
 	buf->data = NULL;
 }
 
-int jdwp_pack( jdwp_buffer* buf, char format, uint64_t value ){
-	switch (format) {
+/*
+函数功能：加入一个pack数据
+参数：	jdwp_buffer* buf buf结构体指针
+		char format 所加入数据的格式
+		uint64_t value 要加入的数据的值
+返回值：调用成功返回0，调用失败返回JDWP_OP_UNSUPPORTED
+*/
+int jdwp_pack( jdwp_buffer* buf, char format, uint64_t value )
+{
+	switch (format) 
+	{
 	case '1':
 		return jdwp_pack_u8(buf, (uint8_t)value);
 	case '2':
@@ -225,7 +297,11 @@ int jdwp_pack( jdwp_buffer* buf, char format, uint64_t value ){
 	}
 }
 
-int jdwp_unpack( jdwp_buffer* buf, char format, uint64_t *value ){	
+/*
+函数功能：根据格式表述符对数据进行转换
+*/
+int jdwp_unpack( jdwp_buffer* buf, char format, uint64_t *value )
+{	
 	switch (format) {
 	case '1':
 		return jdwp_unpack_u8(buf, (uint8_t*)value);
@@ -241,7 +317,7 @@ int jdwp_unpack( jdwp_buffer* buf, char format, uint64_t *value ){
 		return jdwp_unpack_u64(buf, value);
 	case 'o':
 		return jdwp_unpack_id(buf, value, buf->oSz);
-	case 't':
+	case 't': //thread id
 		return jdwp_unpack_id(buf, value, buf->tSz);
 	case 'f':
 		return jdwp_unpack_id(buf, value, buf->fSz);
@@ -283,34 +359,53 @@ int jdwp_size( jdwp_buffer* buf, char format ){
 	}
 }
 
-int jdwp_pack_object_id( jdwp_buffer* buf, uint64_t id ){
+int jdwp_pack_object_id( jdwp_buffer* buf, uint64_t id )
+{
 	return jdwp_pack_id( buf, id, buf->oSz );
 }
-int jdwp_pack_field_id( jdwp_buffer* buf, uint64_t id ){
+
+int jdwp_pack_field_id( jdwp_buffer* buf, uint64_t id )
+{
 	return jdwp_pack_id( buf, id, buf->fSz );
 }
-int jdwp_pack_method_id( jdwp_buffer* buf, uint64_t id ){
+
+int jdwp_pack_method_id( jdwp_buffer* buf, uint64_t id )
+{
 	return jdwp_pack_id( buf, id, buf->mSz );
 }
-int jdwp_pack_type_id( jdwp_buffer* buf, uint64_t id ){
+
+int jdwp_pack_type_id( jdwp_buffer* buf, uint64_t id )
+{
 	return jdwp_pack_id( buf, id, buf->tSz );
 }
-int jdwp_pack_frame_id( jdwp_buffer* buf, uint64_t id ){
+
+int jdwp_pack_frame_id( jdwp_buffer* buf, uint64_t id )
+{
 	return jdwp_pack_id( buf, id, buf->sSz );
 }
-int jdwp_unpack_object_id( jdwp_buffer* buf, uint64_t* id ){
+
+int jdwp_unpack_object_id( jdwp_buffer* buf, uint64_t* id )
+{
 	return jdwp_unpack_id( buf, id, buf->oSz );
 }
-int jdwp_unpack_field_id( jdwp_buffer* buf, uint64_t* id ){
+
+int jdwp_unpack_field_id( jdwp_buffer* buf, uint64_t* id )
+{
 	return jdwp_unpack_id( buf, id, buf->fSz );
 }
-int jdwp_unpack_method_id( jdwp_buffer* buf, uint64_t* id ){
+
+int jdwp_unpack_method_id( jdwp_buffer* buf, uint64_t* id )
+{
 	return jdwp_unpack_id( buf, id, buf->mSz ); 
 }
-int jdwp_unpack_type_id( jdwp_buffer* buf, uint64_t* id ){
+
+int jdwp_unpack_type_id( jdwp_buffer* buf, uint64_t* id )
+{
 	return jdwp_unpack_id( buf, id, buf->tSz );
 }
-int jdwp_unpack_frame_id( jdwp_buffer* buf, uint64_t* id ){
+
+int jdwp_unpack_frame_id( jdwp_buffer* buf, uint64_t* id )
+{
 	return jdwp_unpack_id( buf, id, buf->sSz );
 }
 
@@ -383,7 +478,8 @@ int jdwp_packfv( jdwp_buffer* buf, char* format, va_list ap ){
 }
 
 /** unpacks fields from the current buf, reading field by field, and returning when complete */
-int jdwp_unpackf( jdwp_buffer* buf, char* format, ... ){
+int jdwp_unpackf( jdwp_buffer* buf, char* format, ... )
+{
 	va_list ap;
 	va_start(ap, format);
 	int err = jdwp_unpackfv(buf, format, ap);
@@ -392,7 +488,8 @@ int jdwp_unpackf( jdwp_buffer* buf, char* format, ... ){
 }
 
 /** unpacks fields from the current buf, reading field by field, and returning when complete */
-int jdwp_unpackfv( jdwp_buffer* buf, char* format, va_list ap ){
+int jdwp_unpackfv( jdwp_buffer* buf, char* format, va_list ap )
+{
 	uint8_t *v8;
 	uint16_t *v16;
 	uint32_t *v32;
