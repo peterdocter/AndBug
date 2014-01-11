@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+﻿#!/usr/bin/env python
 # -*- coding: utf-8 -*- 
 
 ## Copyright 2011, IOActive, Inc. All rights reserved.
@@ -107,8 +107,8 @@ def dump_source(lines, head = None):
         line = line.strip()
         if not line: continue
         lead = line[0]
-        if lead == '.':
-            if line.startswith(".method "):
+        if lead == '.':  #标注信息
+            if line.startswith(".method "):  #函数标识
                 section(line[1:])
             elif line.startswith(".end"):
                 exit()
@@ -116,9 +116,9 @@ def dump_source(lines, head = None):
                 andbug.screed.line(line, row)
             else:
                 item(line[1:])
-        elif line.startswith(":"):
+        elif line.startswith(":"):  #跳转索引信息的标签
             refer(line[1:])
-        elif line.startswith("#"):
+        elif line.startswith("#"): #注释
             meta(line[1:])
         elif line == '*/}':
             pass # meh

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+ï»¿#!/usr/bin/env python
 # -*- coding: utf-8 -*- 
 
 ## Copyright 2011, IOActive, Inc. All rights reserved.
@@ -27,7 +27,7 @@ import andbug #andbug.data, andbug.proto, andbug.screed
 from andbug import log
 import traceback
 
-g_jdwp_request_timeout =2
+g_jdwp_request_timeout =5
 
 ## Implementation Questions:
 ## -- unpackFrom methods are used to unpack references to an element from
@@ -50,10 +50,10 @@ class RequestError(Exception):
         self.code = code
 
 class Element(object):
-    def __repr__(self):  #ÒÔ´òÓ¡·½Ê½£¬Êä³ö×Ö·û´®
+    def __repr__(self):  #ä»¥æ‰“å°æ–¹å¼ï¼Œè¾“å‡ºå­—ç¬¦ä¸²
         return '<%s>' % self
 
-    def __str__(self):  #Êä³ö×Ö·û´®
+    def __str__(self):  #è¾“å‡ºå­—ç¬¦ä¸²
         return '%s:%s' % (type(self).__name__, id(self))
 
 class SessionElement(Element):
@@ -65,7 +65,7 @@ class SessionElement(Element):
         return self.sess.conn
     
     
-#Ö÷ÒªÊÇÖ¸ÀàµÄ³ÉÔ±±äÁ¿
+#ä¸»è¦æ˜¯æŒ‡ç±»çš„æˆå‘˜å˜é‡
 class Field(SessionElement):
     def __init__(self, session, fid):
         SessionElement.__init__(self, session)
@@ -109,7 +109,7 @@ class Field(SessionElement):
     
     def get_property(self):
         '''
-        ÅĞ¶ÏfieldµÄÊôĞÔÊÇÊ²Ã´ÑùµÄ£¬Èçpublic static        
+        åˆ¤æ–­fieldçš„å±æ€§æ˜¯ä»€ä¹ˆæ ·çš„ï¼Œå¦‚public static        
         '''
         property_value= ""
         if self.public:
@@ -163,7 +163,7 @@ class Frame(SessionElement):
 
     @classmethod 
     def unpackFrom(impl, sess, buf):
-        return sess.pool(impl, sess, buf.unpackFrameId()) #´´½¨Ò»¸öFrameÀàĞÍµÄ¶ÔÏó
+        return sess.pool(impl, sess, buf.unpackFrameId()) #åˆ›å»ºä¸€ä¸ªFrameç±»å‹çš„å¯¹è±¡
     
     def packTo(self, buf):
         buf.packFrameId(self.fid)
@@ -175,12 +175,12 @@ class Frame(SessionElement):
     @property
     def values(self):
         '''
-        1¡¢ÃüÁî  0x0a 0x01
-        2¡¢×¢ÊÍ£º¶ÑÕ»ÃüÁî¼¯
-        3¡¢[StackFrame Command Set (16)][GetValues Command (1)]
+        1ã€å‘½ä»¤  0x0a 0x01
+        2ã€æ³¨é‡Šï¼šå †æ ˆå‘½ä»¤é›†
+        3ã€[StackFrame Command Set (16)][GetValues Command (1)]
         '''
         vals = {}
-        if self.native: return vals  #Èç¹ûÊÇÏµÍ³º¯Êı·µ»Ø¿Õ
+        if self.native: return vals  #å¦‚æœæ˜¯ç³»ç»Ÿå‡½æ•°è¿”å›ç©º
         
         sess = self.sess
         conn = self.conn
@@ -191,11 +191,11 @@ class Frame(SessionElement):
         log.debug("study", "In frame thread_id=" + str(self.tid))
         log.debug("study", "In frame frame_id=" + str(self.fid))
         log.debug("study", "In frame len(slots)=" + str(len(slots)))
-        buf.packInt(len(slots))  #The number of values to get.   Òª»ñÈ¡¾Ö²¿±äÁ¿µÄ¸öÊı
+        buf.packInt(len(slots))  #The number of values to get.   è¦è·å–å±€éƒ¨å˜é‡çš„ä¸ªæ•°
 
         for slot in slots:
-            buf.packInt(slot.index)  #The local variable's index in the frame.  ¾Ö²¿±äÁ¿µÄË÷ÒıÖµ
-            buf.packU8(slot.tag) #TODO: GENERICS  #A tag identifying the type of the variable  ±êÖ¾±äÁ¿ÀàĞÍµÄ±êÇ©
+            buf.packInt(slot.index)  #The local variable's index in the frame.  å±€éƒ¨å˜é‡çš„ç´¢å¼•å€¼
+            buf.packU8(slot.tag) #TODO: GENERICS  #A tag identifying the type of the variable  æ ‡å¿—å˜é‡ç±»å‹çš„æ ‡ç­¾
             log.debug("study", "In frame slot.index=" + str(slot.index))
             log.debug("study", "In frame slot.tag=" + str(slot.tag))
             
@@ -289,8 +289,8 @@ class Thread(SessionElement):
 
     def suspend(self):  
         ''' 
-        1¡¢ËÆºõÃüÁîÓ¦¸ÃÊÇ0x0b 0x01 ÔİÍ£Ïß³ÌµÄÃüÁî  [ThreadReference Command Set (11)][Suspend Command (2)]
-        2¡¢ÓÃÓÚÔİÍ£µ¥¸öÏß³Ì¡£
+        1ã€ä¼¼ä¹å‘½ä»¤åº”è¯¥æ˜¯0x0b 0x01 æš‚åœçº¿ç¨‹çš„å‘½ä»¤  [ThreadReference Command Set (11)][Suspend Command (2)]
+        2ã€ç”¨äºæš‚åœå•ä¸ªçº¿ç¨‹ã€‚
         
         '''
         conn = self.conn
@@ -303,8 +303,8 @@ class Thread(SessionElement):
 
     def resume(self):
         ''' 
-            1¡¢ÃüÁîÊÇ0x0b 0x03 ÖØĞÂÆô¶¯Ïß³Ì  [ThreadReference Command Set (11)][Resume Command (3)]
-            2¡¢Æô¶¯Ö®Ç°µÄÏß³Ì
+            1ã€å‘½ä»¤æ˜¯0x0b 0x03 é‡æ–°å¯åŠ¨çº¿ç¨‹  [ThreadReference Command Set (11)][Resume Command (3)]
+            2ã€å¯åŠ¨ä¹‹å‰çš„çº¿ç¨‹
         '''
         conn = self.conn
         buf = conn.buffer()
@@ -313,7 +313,28 @@ class Thread(SessionElement):
         code, buf = conn.request(0x0B03, buf.data(), g_jdwp_request_timeout)
         if code != 0:
             raise RequestError(code)
+        #add by sq.luo
+        #self.sess.suspendState.resume(self.sess)
+    #add by sq.luo  
+    def singleStep(self, func = None, queue = None, stepdepth = 1):
+        suspendState = self.sess.suspendState
+        if suspendState.set:
+            self.sess.emap[suspendState.eid].clear()
+        conn = self.conn
+        buf = conn.buffer()
+        # 1:SINGLE_STEP, 1: SP_THREAD, 1: modifers 10: condition of Step 
+        # 1: Step size :Line 1: stepdepth: over
 
+        buf.pack('11i1tii', 1, 1, 1, 10, self.tid, 1, stepdepth) 
+        code, buf = conn.request(0x0f01, buf.data())
+        if code != 0:
+            raise RequestError(code)
+        eid = buf.unpackInt()
+        self.sess.suspendState.setBreakPoint(eid, stepdepth)
+        h = self.sess.hook(eid, func, queue, self)
+        self.resume();
+        return h
+    
     def packTo(self, buf):
         buf.packObjectId(self.tid)
 
@@ -331,37 +352,37 @@ class Thread(SessionElement):
 
     @classmethod
     def unpackFrom(impl, sess, buf):
-        tid = buf.unpackObjectId()  #»ñÈ¡µ±Ç°Ïß³ÌµÄIDÖµ
-        return sess.pool(impl, sess, tid)  #´´ÔìÒ»¸öThredÀà£¬sessºÍtidÊÇ´«µİ¸ø¹¹Ôìº¯ÊıµÄ±äÁ¿
+        tid = buf.unpackObjectId()  #è·å–å½“å‰çº¿ç¨‹çš„IDå€¼
+        return sess.pool(impl, sess, tid)  #åˆ›é€ ä¸€ä¸ªThredç±»ï¼Œsesså’Œtidæ˜¯ä¼ é€’ç»™æ„é€ å‡½æ•°çš„å˜é‡
 
     @property
     def frames(self):
-        '''ÃüÁî 0x0b 0x06 ¹¦ÄÜ·µ»Øµ±Ç°¹ÒÆğÏß³ÌµÄ¶ÑÕ»ĞÅÏ¢£¬  [ThreadReference Command Set (11)][Frames Command(6)]
+        '''å‘½ä»¤ 0x0b 0x06 åŠŸèƒ½è¿”å›å½“å‰æŒ‚èµ·çº¿ç¨‹çš„å †æ ˆä¿¡æ¯ï¼Œ  [ThreadReference Command Set (11)][Frames Command(6)]
         '''
         tid = self.tid
         sess = self.sess
-        conn = self.conn  #connÊÇConnectionÀàĞÍµÄ±äÁ¿
+        conn = self.conn  #connæ˜¯Connectionç±»å‹çš„å˜é‡
         buf = conn.buffer()
-        buf.pack('oii', self.tid, 0, -1) #Èı¸ö²ÎÊı£¬tid Ïß³Ìid£»0±íÊ¾´Ó¶ÑÕ»×î¿ªÊ¼Î»ÖÃ»ñÈ¡£¬£»-1±íÊ¾»ñÈ¡ËùÓĞµÄ¶ÑÕ»ĞÅÏ¢
+        buf.pack('oii', self.tid, 0, -1) #ä¸‰ä¸ªå‚æ•°ï¼Œtid çº¿ç¨‹idï¼›0è¡¨ç¤ºä»å †æ ˆæœ€å¼€å§‹ä½ç½®è·å–ï¼Œï¼›-1è¡¨ç¤ºè·å–æ‰€æœ‰çš„å †æ ˆä¿¡æ¯
         log.debug("study", "call jdwp 0x0B 06")
         code, buf = conn.request(0x0B06, buf.data(), g_jdwp_request_timeout)
         if code != 0:
             raise RequestError(code)
-        ct = buf.unpackInt() #¶ÑÕ»ĞÅÏ¢µÄ¸öÊı
-        #Õâ¸öjdwpÃüÁî·µ»ØµÄÊı¾İÊÇ£ºct£º¶ÑÕ»µÄ¸öÊı£¬frameID£ºÃ¿¸ö¶ÑÕ»µÄid£»location£ºÎ»ÖÃĞÅÏ¢
+        ct = buf.unpackInt() #å †æ ˆä¿¡æ¯çš„ä¸ªæ•°
+        #è¿™ä¸ªjdwpå‘½ä»¤è¿”å›çš„æ•°æ®æ˜¯ï¼šctï¼šå †æ ˆçš„ä¸ªæ•°ï¼ŒframeIDï¼šæ¯ä¸ªå †æ ˆçš„idï¼›locationï¼šä½ç½®ä¿¡æ¯
         
-        def load_frame(): #ÓÃÀ´½âÎö·µ»ØµÄ¶ÑÕ»Êı¾İ
-            f = Frame.unpackFrom(sess, buf) #fÎª·µ»ØµÄFrame¶ÑÕ»ÀàĞÍµÄ¶ÔÏó
-            f.loc = Location.unpackFrom(sess, buf) #LocationÀàĞÍµÄ¶ÔÏó
-            f.tid = tid #´«µİµ±Ç°Ïß³ÌµÄid
+        def load_frame(): #ç”¨æ¥è§£æè¿”å›çš„å †æ ˆæ•°æ®
+            f = Frame.unpackFrom(sess, buf) #fä¸ºè¿”å›çš„Frameå †æ ˆç±»å‹çš„å¯¹è±¡
+            f.loc = Location.unpackFrom(sess, buf) #Locationç±»å‹çš„å¯¹è±¡
+            f.tid = tid #ä¼ é€’å½“å‰çº¿ç¨‹çš„id
             return f
 
         return andbug.data.view(load_frame() for i in range(0,ct))
 
     @property
     def frameCount(self): 
-        '''ÃüÁî: 0x0b 0x07
-                                 ¹¦ÄÜ : »ñÈ¡¹ÒÆğÏß³ÌµÄ¶ÑÕ»Ö¡µÄ¸öÊı
+        '''å‘½ä»¤: 0x0b 0x07
+                                 åŠŸèƒ½ : è·å–æŒ‚èµ·çº¿ç¨‹çš„å †æ ˆå¸§çš„ä¸ªæ•°
             [ThreadReference Command Set (11)][FrameCount Command (7)#]
         '''  
         conn = self.conn
@@ -375,8 +396,8 @@ class Thread(SessionElement):
 
     @property
     def name(self): 
-        '''ÃüÁî: 0x0b 0x01
-                                 ¹¦ÄÜ : »ñÈ¡Ïß³ÌÃû³Æ
+        '''å‘½ä»¤: 0x0b 0x01
+                                 åŠŸèƒ½ : è·å–çº¿ç¨‹åç§°
             [ThreadReference Command Set (11)][FrameCount Command (1)#]
         '''   
         conn = self.conn
@@ -420,13 +441,13 @@ class Thread(SessionElement):
 
 class Location(SessionElement):
     '''
-    Àà¹¦ÄÜ£ºÃèÊö´úÂëÖĞµÄÒ»¸öÎ»ÖÃ
+    ç±»åŠŸèƒ½ï¼šæè¿°ä»£ç ä¸­çš„ä¸€ä¸ªä½ç½®
     '''
     def __init__(self, sess, tid, mid, loc):
         SessionElement.__init__(self, sess)
         self.tid = tid  #class type id
         self.mid = mid  #method id
-        self.loc = loc  #long ÀàĞÍµÄÕûÊı
+        self.loc = loc  #long ç±»å‹çš„æ•´æ•°
         self.line = None
         log.debug("study", "in Loction class: tid=" + str(tid) + "\t mid=" + str(mid) + "\t loc=" + str(loc))
 
@@ -441,36 +462,36 @@ class Location(SessionElement):
         buf.ipack('1tm8', c.tag, self.tid, self.mid, self.loc)
         log.debug("study", "in Location.packTo: tag=" + str(c.tag) + "\t tid=" + str(c.tid) + "\t mid=" + str(self.mid) + "\t loc=" + str(self.loc))
 
-    @classmethod #Àà·½·¨
+    @classmethod #ç±»æ–¹æ³•
     def unpackFrom(impl, sess, buf):
         tag, tid, mid, loc = buf.unpack('1tm8')
         log.debug("study", "In Location.unpackFrom: tag=" + str(tag) + "\t tid=" + str(tid) + "\t mid=" + str(mid) + "\t loc=" + str(loc))
-        return sess.pool(impl, sess, tid, mid, loc)  #ÉèÖÃÒ»¸öLocationÀàĞÍ
+        return sess.pool(impl, sess, tid, mid, loc)  #è®¾ç½®ä¸€ä¸ªLocationç±»å‹
 
     def hookOut(self, func=None, queue=None):
         '''
-        ¹¦ÄÜ£ºº¯Êıµ÷ÓÃ½áÊøÊ±£¬½«³ÌĞòhookÖÕ¶Ë
+        åŠŸèƒ½ï¼šå‡½æ•°è°ƒç”¨ç»“æŸæ—¶ï¼Œå°†ç¨‹åºhookç»ˆç«¯
         '''
         conn = self.conn
         buf = conn.buffer()
         # 40:EK_METHOD_ENTRY, 1: EVENT_THREAD, 1 condition of type Location (7) Case LocationOnly - if modKind is 7:
-        buf.pack('11i1', 41, 1, 1, 7)  #Ö»ÊµÏÖÁËMETHOD_ENTRY·½·¨Èë¿ÚÊÂ¼şµÄ´¦Àí£¬ÆäËûÊÂ¼şÃ»ÓĞ´¦Àí
+        buf.pack('11i1', 41, 1, 1, 7)  #åªå®ç°äº†METHOD_ENTRYæ–¹æ³•å…¥å£äº‹ä»¶çš„å¤„ç†ï¼Œå…¶ä»–äº‹ä»¶æ²¡æœ‰å¤„ç†
 
-        self.packTo(buf) #ÔÚÕâÀï½«loc´«ÈëjdwpµÄ²ÎÊı£¬
+        self.packTo(buf) #åœ¨è¿™é‡Œå°†locä¼ å…¥jdwpçš„å‚æ•°ï¼Œ
         log.debug("study", "call jdwp 0x0F 01")
         code, buf = conn.request(0x0F01, buf.data(), g_jdwp_request_timeout)
         if code != 0:
             raise RequestError(code)
-        eid = buf.unpackInt() #·µ»ØµÄÊÇÒ»¸öID of created request£¬ÓÃÀ´Çø±ğÓëÕâ¸ö¶Ïµã
+        eid = buf.unpackInt() #è¿”å›çš„æ˜¯ä¸€ä¸ªID of created requestï¼Œç”¨æ¥åŒºåˆ«ä¸è¿™ä¸ªæ–­ç‚¹
         log.debug("study", "eid=" + str(eid))   
-        return self.sess.hook(eid, func, queue, self) #queue²ÎÊıÎª¿Õ  sessµÄÀàĞÍÊÇSession
+        return self.sess.hook(eid, func, queue, self) #queueå‚æ•°ä¸ºç©º  sessçš„ç±»å‹æ˜¯Session
 
     def hook(self, func = None, queue = None):
         '''
-            ÃüÁî£º0x0f 0x01
-            ¹¦ÄÜ£ºÉèÖÃÒ»¸öÊÂ¼şÇëÇó£¬µ÷ÓÃÖ¸¶¨º¯ÊıÊ±£¬ÖĞ¶Ïº¯Êı
+            å‘½ä»¤ï¼š0x0f 0x01
+            åŠŸèƒ½ï¼šè®¾ç½®ä¸€ä¸ªäº‹ä»¶è¯·æ±‚ï¼Œè°ƒç”¨æŒ‡å®šå‡½æ•°æ—¶ï¼Œä¸­æ–­å‡½æ•°
             [EventRequest Command Set (15)] [Set Command (1)]
-            ×¢£ºËùÉèÖÃµÄ¾ßÌåÊÂ¼şÓÉ buf.pack('11i1', 40, 1, 1, 7) È·¶¨
+            æ³¨ï¼šæ‰€è®¾ç½®çš„å…·ä½“äº‹ä»¶ç”± buf.pack('11i1', 40, 1, 1, 7) ç¡®å®š
         '''
         conn = self.conn
         buf = conn.buffer()
@@ -485,16 +506,16 @@ class Location(SessionElement):
         else:
             eventKind = 2
         # 1: SP_THREAD, 1 condition of type Location (7)
-        buf.pack('11i1', eventKind, 1, 1, 7)  #Ö»ÊµÏÖÁËMETHOD_ENTRY·½·¨Èë¿ÚÊÂ¼şµÄ´¦Àí£¬ÆäËûÊÂ¼şÃ»ÓĞ´¦Àí
+        buf.pack('11i1', eventKind, 1, 1, 7)  #åªå®ç°äº†METHOD_ENTRYæ–¹æ³•å…¥å£äº‹ä»¶çš„å¤„ç†ï¼Œå…¶ä»–äº‹ä»¶æ²¡æœ‰å¤„ç†
 
-        self.packTo(buf) #ÔÚÕâÀï½«loc´«ÈëjdwpµÄ²ÎÊı£¬
+        self.packTo(buf) #åœ¨è¿™é‡Œå°†locä¼ å…¥jdwpçš„å‚æ•°ï¼Œ
         log.debug("study", "call jdwp 0x0F 01")
         code, buf = conn.request(0x0F01, buf.data(), g_jdwp_request_timeout)
         if code != 0:
             raise RequestError(code)
-        eid = buf.unpackInt() #·µ»ØµÄÊÇÒ»¸öID of created request£¬ÓÃÀ´Çø±ğÓëÕâ¸ö¶Ïµã
+        eid = buf.unpackInt() #è¿”å›çš„æ˜¯ä¸€ä¸ªID of created requestï¼Œç”¨æ¥åŒºåˆ«ä¸è¿™ä¸ªæ–­ç‚¹
         log.debug("study", "eid=" + str(eid))   
-        return self.sess.hook(eid, func, queue, self) #queue²ÎÊıÎª¿Õ  sessµÄÀàĞÍÊÇSession
+        return self.sess.hook(eid, func, queue, self) #queueå‚æ•°ä¸ºç©º  sessçš„ç±»å‹æ˜¯Session
 
     @property
     def native(self):
@@ -506,7 +527,7 @@ class Location(SessionElement):
 
     @property
     def klass(self):
-        return self.sess.pool(Class, self.sess, self.tid)  #´ÓsessÖĞÕÒÖ¸¶¨tidµÄclass¶ÔÏó£¬ÕâÀïÓ¦¸ÃÄÜ¹»ÕÒµ½£¨Ö®Ç°ÒÑ¾­´´½¨ÁË£©£¬·µ»Ø¸Ãclass¶ÔÏó
+        return self.sess.pool(Class, self.sess, self.tid)  #ä»sessä¸­æ‰¾æŒ‡å®štidçš„classå¯¹è±¡ï¼Œè¿™é‡Œåº”è¯¥èƒ½å¤Ÿæ‰¾åˆ°ï¼ˆä¹‹å‰å·²ç»åˆ›å»ºäº†ï¼‰ï¼Œè¿”å›è¯¥classå¯¹è±¡
 
     @property
     def slots(self):
@@ -519,7 +540,7 @@ class Location(SessionElement):
                 if f > l: continue
                 if l - f > slot.locLength: continue
                 yield slot
-        return tuple() if self.native else tuple(filter_slots())#Èç¹ûÊÇÏµÍ³º¯Êı£¬·µ»ØÃ»ÓĞÄÚÈİµÄ¿ÕÔª×é
+        return tuple() if self.native else tuple(filter_slots())#å¦‚æœæ˜¯ç³»ç»Ÿå‡½æ•°ï¼Œè¿”å›æ²¡æœ‰å†…å®¹çš„ç©ºå…ƒç»„
         '''
             In Location.slots l=9     f=93
             In Location.slots l=9     f=93
@@ -537,7 +558,7 @@ class Location(SessionElement):
         '''
 class Slot(SessionElement):
     '''
-    ÀàµÄ¹¦ÄÜ£ºÃèÊöÒ»¸ö±äÁ¿µÄĞÅÏ¢£¬Ö÷ÒªÓÃÀ´ÃèÊö³ÉÔ±º¯ÊıÖĞµÄ³ÉÔ±±äÁ¿ºÍº¯Êı²ÎÊı
+    ç±»çš„åŠŸèƒ½ï¼šæè¿°ä¸€ä¸ªå˜é‡çš„ä¿¡æ¯ï¼Œä¸»è¦ç”¨æ¥æè¿°æˆå‘˜å‡½æ•°ä¸­çš„æˆå‘˜å˜é‡å’Œå‡½æ•°å‚æ•°
     '''
     def __init__(self, sess, tid, mid, index):
         SessionElement.__init__(self, sess)
@@ -569,12 +590,12 @@ class Slot(SessionElement):
 class Method(SessionElement):
     def __init__(self, sess, tid, mid):
         SessionElement.__init__(self, sess)
-        self.tid = tid   #refType id µÄÖµ
-        self.mid = mid   #method id µÄÖµ
+        self.tid = tid   #refType id çš„å€¼
+        self.mid = mid   #method id çš„å€¼
 
     @property
     def klass(self):
-        return self.sess.pool(Class, self.sess, self.tid) #ÕâÀïÊÇTypeId
+        return self.sess.pool(Class, self.sess, self.tid) #è¿™é‡Œæ˜¯TypeId
 
     def __str__(self):
         return '%s.%s%s' % (
@@ -586,13 +607,13 @@ class Method(SessionElement):
 
     def load_line_table(self):
         '''
-                                ÃüÁî£º0x06 0x01
-                                ¹¦ÄÜ£º·µ»Øº¯ÊıµÄĞĞºÅĞÅÏ¢
-            [Method Command Set (6)][LineTable Command (1)]
+        å‘½ä»¤ï¼š0x06 0x01
+        åŠŸèƒ½ï¼šè¿”å›å‡½æ•°çš„è¡Œå·ä¿¡æ¯
+        [Method Command Set (6)][LineTable Command (1)]
         '''
         
         if self.abstract!=0:
-            #ËµÃ÷µ±Ç°·½·¨ÊÇÒ»¸ö³éÏó·½·¨
+            #è¯´æ˜å½“å‰æ–¹æ³•æ˜¯ä¸€ä¸ªæŠ½è±¡æ–¹æ³•
             log.debug("study", "the function [" + self.name + "]is abstract function")
             log.debug("study", "flag:" + str(self.flags))
             log.debug("study", "abstract:" + str(self.abstract))
@@ -606,7 +627,7 @@ class Method(SessionElement):
         pool = sess.pool
         tid = self.tid
         mid = self.mid
-        data = conn.buffer().pack('om', tid, mid) #ÊäÈë²ÎÊıÊÇtype idºÍmethod id
+        data = conn.buffer().pack('om', tid, mid) #è¾“å…¥å‚æ•°æ˜¯type idå’Œmethod id
         log.debug("study", "call jdwp 0x06 01")
         code, buf = conn.request(0x0601, data, g_jdwp_request_timeout)
         log.debug("study", "finish " + str(buf)+ " code:" + str(code))
@@ -623,14 +644,14 @@ class Method(SessionElement):
             self.lineTable = andbug.data.view([])
             #TODO: How do we handle native methods?
       
-        self.firstLoc = pool(Location, sess, tid, mid, f) #ÉùÃ÷Ò»¸öLocatonÀàÀ´±£´æ»ñÈ¡µÄlocaitonĞÅÏ¢       
+        self.firstLoc = pool(Location, sess, tid, mid, f) #å£°æ˜ä¸€ä¸ªLocatonç±»æ¥ä¿å­˜è·å–çš„locaitonä¿¡æ¯       
         self.lastLoc = pool(Location, sess, tid, mid, l)
         
 
         ll = {}
-        #self.lineLocs = ll    #Õâ¸ö±äÁ¿ÊÇ·ñÓ¦¸ÃÊÇlineTable£¬ÔÚÕı³£Â·¾¶ÖĞlinetableÃ»ÓĞ¸³Öµ
+        #self.lineLocs = ll    #è¿™ä¸ªå˜é‡æ˜¯å¦åº”è¯¥æ˜¯lineTableï¼Œåœ¨æ­£å¸¸è·¯å¾„ä¸­linetableæ²¡æœ‰èµ‹å€¼
         self.lineTable = ll
-        def line_loc(): #¸ù¾İ»ñÈ¡µÄº¯ÊıµÄ´úÂëĞĞÊıĞÅÏ¢£¬ÖğĞĞÈ¡³ö´úÂëĞÅÏ¢
+        def line_loc(): #æ ¹æ®è·å–çš„å‡½æ•°çš„ä»£ç è¡Œæ•°ä¿¡æ¯ï¼Œé€è¡Œå–å‡ºä»£ç ä¿¡æ¯
             loc, line  = buf.unpack('8i')
             log.debug("study", "loc="+ str(loc) + "\t line=" + str(line))           
             loc = pool(Location, sess, tid, mid, loc)           
@@ -642,7 +663,7 @@ class Method(SessionElement):
             line_loc()
       
     
-    firstLoc = defer(load_line_table, 'firstLoc')   #methodsÀàÖĞµÄ±äÁ¿£¬ËùÒÔ¶ÔÓÚÃ¿¸ö·½·¨¶¼»áÓĞÕâĞ©ĞÅÏ¢
+    firstLoc = defer(load_line_table, 'firstLoc')   #methodsç±»ä¸­çš„å˜é‡ï¼Œæ‰€ä»¥å¯¹äºæ¯ä¸ªæ–¹æ³•éƒ½ä¼šæœ‰è¿™äº›ä¿¡æ¯
     lastLoc = defer(load_line_table, 'lastLoc')
     lineTable = defer(load_line_table, 'lineTable')
 
@@ -658,9 +679,9 @@ class Method(SessionElement):
 
     def load_slot_table(self):
         '''
-            1 ÃüÁî£º0x06  0x05
-            2 ¹¦ÄÜ£º»ñÈ¡Ò»¸ö·½·¨ÖĞµÄ²ÎÊıºÍ±äÁ¿µÄĞÅÏ¢
-            3 ½âÊÍ£º [Method Command Set (6)][VariableTableWithGeneric Command (5)]
+            1 å‘½ä»¤ï¼š0x06  0x05
+            2 åŠŸèƒ½ï¼šè·å–ä¸€ä¸ªæ–¹æ³•ä¸­çš„å‚æ•°å’Œå˜é‡çš„ä¿¡æ¯
+            3 è§£é‡Šï¼š [Method Command Set (6)][VariableTableWithGeneric Command (5)]
         '''
         sess = self.sess
         conn = self.conn
@@ -673,7 +694,7 @@ class Method(SessionElement):
         code, buf = conn.request(0x0605, data, g_jdwp_request_timeout)
         if code != 0: raise RequestError(code)
     
-        act, sct = buf.unpack('ii')  #»ñÈ¡²ÎÊıµÄ¸öÊı£¬»ñÈ¡×Ô±äÁ¿µÄ¸öÊı
+        act, sct = buf.unpack('ii')  #è·å–å‚æ•°çš„ä¸ªæ•°ï¼Œè·å–è‡ªå˜é‡çš„ä¸ªæ•°
         self.arg_cnt = act
         self.slot_cnt = sct
         log.debug("study", "In Method.load_slot_table argCount=" + str(act) + "\t sct=" + str(sct))
@@ -699,8 +720,8 @@ class Method(SessionElement):
 
     def load_bytecodes (self):
         '''
-        º¯Êı¹¦ÄÜ£º»ñµÃÒ»¸öº¯ÊıµÄ×Ö½ÚÂë
-        ×¢£ºdilvik ÔİÊ±²»Ö§³ÖÍ¨¹ı0x0603Ö¸Áî»ñµÃº¯Êı×Ö½ÚÂëµÄ¹¦ÄÜ
+        å‡½æ•°åŠŸèƒ½ï¼šè·å¾—ä¸€ä¸ªå‡½æ•°çš„å­—èŠ‚ç 
+        æ³¨ï¼šdilvik æš‚æ—¶ä¸æ”¯æŒé€šè¿‡0x0603æŒ‡ä»¤è·å¾—å‡½æ•°å­—èŠ‚ç çš„åŠŸèƒ½
         '''
         sess = self.sess
         conn = self.conn
@@ -773,7 +794,7 @@ class Method(SessionElement):
     
     def get_property(self):
         '''
-        ÅĞ¶ÏfieldµÄÊôĞÔÊÇÊ²Ã´ÑùµÄ£¬Èçpublic static        
+        åˆ¤æ–­fieldçš„å±æ€§æ˜¯ä»€ä¹ˆæ ·çš„ï¼Œå¦‚public static        
         '''
         
         property_value= ""
@@ -827,9 +848,9 @@ class RefType(SessionElement):
 
     def load_signature(self):
         ''''
-        1 ÃüÁî£º 0x02 0x0d
-        2 ¹¦ÄÜ£º·µ»ØÒıÓÃÀàĞÍµÄJNI signatureºÍgeneric signature
-        3 ½âÊÍ£º[ReferenceType Command Set (2)][SignatureWithGeneric Command (13)]
+        1 å‘½ä»¤ï¼š 0x02 0x0d
+        2 åŠŸèƒ½ï¼šè¿”å›å¼•ç”¨ç±»å‹çš„JNI signatureå’Œgeneric signature
+        3 è§£é‡Šï¼š[ReferenceType Command Set (2)][SignatureWithGeneric Command (13)]
         '''
         conn = self.conn
         buf = conn.buffer()
@@ -846,9 +867,9 @@ class RefType(SessionElement):
 
     def load_fields(self):
         ''''
-        1 ÃüÁî£º 0x02 0x0e
-        2 ¹¦ÄÜ£º·µ»ØĞÅÏ¢£¬°üÀ¨ ÒıÓÃÀàĞÍÖĞÃ¿Ò»¸ö×Ö¶ÎµÄÍ¨ÓÃÇ©Ãû
-        3 ½âÊÍ£º[ReferenceType Command Set (2)][FieldsWithGeneric Command (14)]
+        1 å‘½ä»¤ï¼š 0x02 0x0e
+        2 åŠŸèƒ½ï¼šè¿”å›ä¿¡æ¯ï¼ŒåŒ…æ‹¬ å¼•ç”¨ç±»å‹ä¸­æ¯ä¸€ä¸ªå­—æ®µçš„é€šç”¨ç­¾å
+        3 è§£é‡Šï¼š[ReferenceType Command Set (2)][FieldsWithGeneric Command (14)]
         '''      
         sess = self.sess
         conn = self.conn
@@ -863,7 +884,7 @@ class RefType(SessionElement):
         ct = buf.unpackU32()
 
         def load_field():
-            field = Field.unpackFrom(sess, buf) #ÏÈ»ñÈ¡fieldµÄÖµ
+            field = Field.unpackFrom(sess, buf) #å…ˆè·å–fieldçš„å€¼
             name, jni, gen, flags = buf.unpack('$$$i')
             #log.debug("study", "field_id="+ str(field) +"\t name=" + str(name) + "\t jni=" + str(jni) + "\t gen=" + str(gen) + "\t flags="+ str(flags))
             field.name = name
@@ -881,18 +902,18 @@ class RefType(SessionElement):
     @property
     def statics(self):
         ''''
-        1 ÃüÁî£º 0x02 0x06
-        2 ¹¦ÄÜ£º·µ»ØÒ»¸öÒıÓÃÀàĞÍÖĞµÄÒ»¸ö»ò¶à¸ö¾²Ì¬±äÁ¿µÄÖµ
-        3 ½âÊÍ£º[ReferenceType Command Set (2)][GetValues Command (6)]
-        4 ÊäÈë²ÎÊı£ºÖ¸¶¨ÀàµÄtype idµÄÖµ
-                  Õâ¸öÀàÖĞµÄ¾²Ì¬±äÁ¿µÄ¸öÊı
-                  ¸÷¾²Ì¬±äÁ¿µÄfield idÖµ     
+        1 å‘½ä»¤ï¼š 0x02 0x06
+        2 åŠŸèƒ½ï¼šè¿”å›ä¸€ä¸ªå¼•ç”¨ç±»å‹ä¸­çš„ä¸€ä¸ªæˆ–å¤šä¸ªé™æ€å˜é‡çš„å€¼
+        3 è§£é‡Šï¼š[ReferenceType Command Set (2)][GetValues Command (6)]
+        4 è¾“å…¥å‚æ•°ï¼šæŒ‡å®šç±»çš„type idçš„å€¼
+                  è¿™ä¸ªç±»ä¸­çš„é™æ€å˜é‡çš„ä¸ªæ•°
+                  å„é™æ€å˜é‡çš„field idå€¼     
         '''
         sess = self.sess
         conn = self.conn
         buf = conn.buffer()
         buf.packTypeId(self.tid)        
-        fields = list(f for f in self.fieldList if f.static)  #ÕâÀïÔÚÔÚ·¢Æğ0x0206ÃüÁîÊ±£¬»á·ÃÎÊ
+        fields = list(f for f in self.fieldList if f.static)  #è¿™é‡Œåœ¨åœ¨å‘èµ·0x0206å‘½ä»¤æ—¶ï¼Œä¼šè®¿é—®
         buf.packInt(len(fields))
         log.debug("study", "statics tid(type_id)= " + str(self.tid))
         log.debug("study", "the fields len = " + str(len(fields)))
@@ -901,7 +922,7 @@ class RefType(SessionElement):
             buf.packFieldId(field.fid)
             log.debug("study", "static field id=" + str(field.fid))
             
-        log.debug("study", "call jdwp 0x02 06 »ñÈ¡Ö¸¶¨ÀàĞÍÖĞµÄ¾²Ì¬±äÁ¿ĞÅÏ¢ " )
+        log.debug("study", "call jdwp 0x02 06 è·å–æŒ‡å®šç±»å‹ä¸­çš„é™æ€å˜é‡ä¿¡æ¯ " )
         code, buf = conn.request(0x0206, buf.data(), g_jdwp_request_timeout) 
         if code != 0:
             raise RequestError(code)
@@ -910,7 +931,7 @@ class RefType(SessionElement):
         vals = {}
         for x in range(ct):
             f = fields[x]           
-            vals[f.name] = unpack_value(sess, buf)  #Í¨¹ıµ÷ÓÃunpack_valueº¯Êı£¬»ñÈ¡µÄfieldµÄÖµ£¬Õë¶ÔÖµµÄ²»Í¬ÄÚÈİ£¬½øĞĞ²»Í¬µÄ´¦Àí
+            vals[f.name] = unpack_value(sess, buf)  #é€šè¿‡è°ƒç”¨unpack_valueå‡½æ•°ï¼Œè·å–çš„fieldçš„å€¼ï¼Œé’ˆå¯¹å€¼çš„ä¸åŒå†…å®¹ï¼Œè¿›è¡Œä¸åŒçš„å¤„ç†
             log.debug("study", "ttt_" + str(vals[f.name]))
             
         log.debug("study", "in statics finish function")
@@ -918,19 +939,19 @@ class RefType(SessionElement):
 
     def load_methods(self):
         ''''
-        1 ÃüÁî£º 0x02 0x0f
-        2 ¹¦ÄÜ£ºÍ¨¹ıÒ»¸öÒıÓÃÀàĞÍ·µ»ØÆä°üº¬µÄ·½·¨µÄÍ¨ÓÃÇ©ÃûĞÅÏ¢
-        3 ½âÊÍ£º[ReferenceType Command Set (2)][MethodsWithGeneric Command (15)]
+        1 å‘½ä»¤ï¼š 0x02 0x0f
+        2 åŠŸèƒ½ï¼šé€šè¿‡ä¸€ä¸ªå¼•ç”¨ç±»å‹è¿”å›å…¶åŒ…å«çš„æ–¹æ³•çš„é€šç”¨ç­¾åä¿¡æ¯
+        3 è§£é‡Šï¼š[ReferenceType Command Set (2)][MethodsWithGeneric Command (15)]
         '''
         tid = self.tid
         sess = self.sess
         conn = self.conn
         pool = sess.pool
         buf = conn.buffer()
-        buf.pack("t", tid) #´«ÈëµÄÖµÊÇrefType id
+        buf.pack("t", tid) #ä¼ å…¥çš„å€¼æ˜¯refType id
         log.debug("study", "call jdwp 0x02 0F "+ str(tid))
         code, buf = conn.request(0x020F, buf.data(), g_jdwp_request_timeout)
-        andbug.screed.item("+++call load methods")
+
         if code != 0:
             raise RequestError(code)
 
@@ -970,12 +991,12 @@ class RefType(SessionElement):
     methodByJni = defer(load_methods, 'methodByJni')
     methodByName = defer(load_methods, 'methodByName')
 
-    def methods(self, name=None, jni=None):
+    def methods(self, name=None, jni=None, filtername=None):
         if name and jni:
             log.debug("study", name + "\t" + jni)
             seq = self.methodByName[name]
             log.debug("study", "seq=" + str(seq))
-            seq = filter(x in seq, self.methodByJni[jni]) #2.7 °æ±¾µÄpython»áÖ´ĞĞ´íÎó
+            seq = filter(x in seq, self.methodByJni[jni]) #2.7 ç‰ˆæœ¬çš„pythonä¼šæ‰§è¡Œé”™è¯¯
         elif name:
             seq = andbug.data.view(self.methodByName[name])
         elif jni:
@@ -993,8 +1014,8 @@ class RefType(SessionElement):
         return name
 
 class Class(RefType): 
-    #ÔÚobj = self.pool(Class, self, tid) ´úÂë´¦£¬»á³õÊ¼»¯´óÁ¿µÄClassÀàµÄ¶ÔÏó
-    def __init__(self, sess, tid): #Á½¸ö²ÎÊı·Ö±ğÊÇ£ºSessionÀàĞĞµÄ±äÁ¿£¬Óë¾ßÌåÀàËù¶ÔÓ¦µÄtypeidµÄÖµ
+    #åœ¨obj = self.pool(Class, self, tid) ä»£ç å¤„ï¼Œä¼šåˆå§‹åŒ–å¤§é‡çš„Classç±»çš„å¯¹è±¡
+    def __init__(self, sess, tid): #ä¸¤ä¸ªå‚æ•°åˆ†åˆ«æ˜¯ï¼šSessionç±»è¡Œçš„å˜é‡ï¼Œä¸å…·ä½“ç±»æ‰€å¯¹åº”çš„typeidçš„å€¼
         RefType.__init__(self, sess, 'L', tid)
         
     def __str__(self):
@@ -1005,20 +1026,20 @@ class Class(RefType):
 
     def hookEntries(self, func = None, queue = None):
         '''
-        1 ÃüÁî£º 0x0f 0x01
-        2 ¹¦ÄÜ£ºÉèÖÃÊÂ¼ş
-        3 ½âÊÍ£º[EventRequest Command Set (15)][Set Command (1)]
+        1 å‘½ä»¤ï¼š 0x0f 0x01
+        2 åŠŸèƒ½ï¼šè®¾ç½®äº‹ä»¶
+        3 è§£é‡Šï¼š[EventRequest Command Set (15)][Set Command (1)]
         '''
         conn = self.conn
         buf = conn.buffer()
-        # 40:KEK_METHOD_ENTRY, 1: EVENT_THREAD, 1£ºmodifiers£¨Ö»ÓĞÒ»¸ömod£© 4£ºmodKindÊÇ4£¬º¬ÒåÊÇ condition of type ClassRef (4)
-        # Õë¶Ô4Õâ¸ömodkindÖµ£¬ĞèÒª´«ÈëÒ»¸öÖ¸¶¨µÄReference TypeID 
-        buf.pack('11i1t', 40, 1, 1, 4, self.tid)  #tidÎªtype id
+        # 40:KEK_METHOD_ENTRY, 1: EVENT_THREAD, 1ï¼šmodifiersï¼ˆåªæœ‰ä¸€ä¸ªmodï¼‰ 4ï¼šmodKindæ˜¯4ï¼Œå«ä¹‰æ˜¯ condition of type ClassRef (4)
+        # é’ˆå¯¹4è¿™ä¸ªmodkindå€¼ï¼Œéœ€è¦ä¼ å…¥ä¸€ä¸ªæŒ‡å®šçš„Reference TypeID 
+        buf.pack('11i1t', 40, 1, 1, 4, self.tid)  #tidä¸ºtype id
         log.debug("study", "call jdwp 0x0F 01")
         code, buf = conn.request(0x0F01, buf.data(), g_jdwp_request_timeout)
         if code != 0:
             raise RequestError(code)
-        eid = buf.unpackInt() #·µ»ØÖµÊÇÒ»¸örequestID £ºID of created request
+        eid = buf.unpackInt() #è¿”å›å€¼æ˜¯ä¸€ä¸ªrequestID ï¼šID of created request
         log.debug("study", "eid=" + str(eid)) #eid=536870915
         return self.sess.hook(eid, func, queue, self)
         
@@ -1054,7 +1075,7 @@ class Hook(SessionElement):
 
     def put(self, data):
         if self.func is not None:
-            return self.func(data) #ÔÚÕâÀï»Øµ÷ÊÂ¼ş´¦Àíº¯Êı£¬ËùÓĞ²ÎÊıÈ«²¿´«Èë»Øµ÷º¯Êı£¬·Ö±ğ°üº¬ThreadÀàĞÍºÍLocaionÁ½¸öÀàĞÍµÄ¶ÔÏó×÷Îª²ÎÊı
+            return self.func(data) #åœ¨è¿™é‡Œå›è°ƒäº‹ä»¶å¤„ç†å‡½æ•°ï¼Œæ‰€æœ‰å‚æ•°å…¨éƒ¨ä¼ å…¥å›è°ƒå‡½æ•°ï¼Œåˆ†åˆ«åŒ…å«Threadç±»å‹å’ŒLocaionä¸¤ä¸ªç±»å‹çš„å¯¹è±¡ä½œä¸ºå‚æ•°
         else:
             return self.queue.put(data)
             
@@ -1080,7 +1101,7 @@ class Hook(SessionElement):
             
 class VmCapability(Element):
     '''
-    ¼ÇÂ¼µ±Ç°vmËùÖ§³ÖµÄ¹¦ÄÜ
+    è®°å½•å½“å‰vmæ‰€æ”¯æŒçš„åŠŸèƒ½
     '''
     def __init__(self, capabilityBuf, newCapabilityBuf): 
         # reserved16 - reserved32        
@@ -1120,7 +1141,7 @@ class VmCapability(Element):
         self.canSetDefaultStratum = newCapabilityBuf.unpackU8()
         '''
         
-    def __str__(self):  #Êä³ö×Ö·û´®
+    def __str__(self):  #è¾“å‡ºå­—ç¬¦ä¸²
         dataStr =   "canWatchFieldModification=" + str(self.canWatchFieldModification) + "\r\n"
         dataStr +=   "canWatchFieldAccess=" + str(self.canWatchFieldAccess) + "\r\n"
         dataStr +=   "canGetBytecodes=" + str(self.canGetBytecodes) + "\r\n"
@@ -1156,14 +1177,16 @@ def unpack_events(sess, buf):
         else:
             yield im(sess, buf)
 
-#´¦ÀíMETHOD_ENTRYÊÂ¼ş£¬¶Ô¸ÃÊÂ¼şÊ±ÓÉĞéÄâ»ú·µ»ØµÄÊı¾İ½øĞĞ½âÎö
+#å¤„ç†METHOD_ENTRYäº‹ä»¶ï¼Œå¯¹è¯¥äº‹ä»¶æ—¶ç”±è™šæ‹Ÿæœºè¿”å›çš„æ•°æ®è¿›è¡Œè§£æ
 def unpack_event_location(sess, buf):
     rid = buf.unpackInt()  #Request that generated event
-    t = Thread.unpackFrom(sess, buf)    #thread which entered method¡£ ÆäÖĞtÎªÒ»¸öThreadÀàĞÍµÄ¶ÔÏó
-    loc = Location.unpackFrom(sess, buf) #The initial executable location in the method  ÆäÖĞlocÎªÒ»¸öLocationÀàĞÍµÄ¶ÔÏó
+    t = Thread.unpackFrom(sess, buf)    #thread which entered methodã€‚ å…¶ä¸­tä¸ºä¸€ä¸ªThreadç±»å‹çš„å¯¹è±¡
+    loc = Location.unpackFrom(sess, buf) #The initial executable location in the method  å…¶ä¸­locä¸ºä¸€ä¸ªLocationç±»å‹çš„å¯¹è±¡
     log.debug("study", "in unpack_methode_entry rid=" + str(rid) + "\t thread=" + str(t) + "\t loc=" + str(loc))
     return rid, t, loc
 
+# Single Step
+register_unpack_impl(1, unpack_event_location)
 # Breakpoint
 register_unpack_impl(2, unpack_event_location)
 # MothodEntry
@@ -1171,59 +1194,92 @@ register_unpack_impl(40, unpack_event_location)
 # MothodExit
 register_unpack_impl(41, unpack_event_location)
 
+
+#add by sq.luo  
+class SuspendState(object):
+    def __init__(self):
+        self.isSuspend = False
+        self.thread = None
+        self.location = None
+        self.set = False
+        self.eid = 0
+    def suspend(self, data):
+        self.isSuspend = True
+        if len(data) >= 2:
+            self.thread = data[0]
+            self.location = data[1]
+        
+    def resume(self, sess):
+        self.isSuspend = False
+        self.thread = None
+        self.location = None
+        if self.set:
+            sess.emap[self.eid].clear()
+            self.set = False
+    def getThread(self):
+        return self.thread
+    
+    def getLocation(self):
+        return self.location
+    
+    def setBreakPoint(self, eid, stepdepth):
+        self.set = True
+        self.eid = eid
+        self.stepdepth = stepdepth
+        
 class Session(object):
     def __init__(self, conn):
-        self.pool = andbug.data.pool()  #ÔÚandbug/lib/andbug/data.pyÎÄ¼şÖĞ¶¨Òå
-        self.conn = conn  #connÊÇConnection(Thread)µÄÒ»¸ö¶ÔÏó
-        self.emap = {}   #ÓÃÒ»¸ö×ÖµäÀ´´æ·ÅhookµãµÄĞÅÏ¢£¬Ã¿¸öÔªËØÊÇÒ»¸öHookÀàĞÍµÄ¶ÔÏó
+        self.pool = andbug.data.pool()  #åœ¨andbug/lib/andbug/data.pyæ–‡ä»¶ä¸­å®šä¹‰
+        self.conn = conn  #connæ˜¯Connection(Thread)çš„ä¸€ä¸ªå¯¹è±¡
+        self.emap = {}   #ç”¨ä¸€ä¸ªå­—å…¸æ¥å­˜æ”¾hookç‚¹çš„ä¿¡æ¯ï¼Œæ¯ä¸ªå…ƒç´ æ˜¯ä¸€ä¸ªHookç±»å‹çš„å¯¹è±¡
         self.ectl = Lock()
         self.evtq = Queue()
-        conn.hook(0x4064, self.evtq)  #¼ÓÈëevtq¶ÓÁĞÖĞ 16484  ÕâÀïÊÇ¼ÓÈëÃüÁî 0x40 64 ×ª»»³ÉÊ®½øÖÆÊÇ64 100 Event Command Set£¨64£©£ºComposite Command (100)
+        conn.hook(0x4064, self.evtq)  #åŠ å…¥evtqé˜Ÿåˆ—ä¸­ 16484  è¿™é‡Œæ˜¯åŠ å…¥å‘½ä»¤ 0x40 64 è½¬æ¢æˆåè¿›åˆ¶æ˜¯64 100 Event Command Setï¼ˆ64ï¼‰ï¼šComposite Command (100)
         self.ethd = threading.Thread(
-            name='Session', target=self.run  #Ïß³ÌµÄÃû³Æ£¬Ïß³ÌµÄÖ´ĞĞº¯Êı
+            name='Session', target=self.run  #çº¿ç¨‹çš„åç§°ï¼Œçº¿ç¨‹çš„æ‰§è¡Œå‡½æ•°
         )
-        self.ethd.daemon=1  #Ö÷Ïß³Ì½áÊøÊ±£¬»á°Ñ×ÓÏß³ÌÒ²É±ËÀ¡£
+        self.ethd.daemon=1  #ä¸»çº¿ç¨‹ç»“æŸæ—¶ï¼Œä¼šæŠŠå­çº¿ç¨‹ä¹Ÿæ€æ­»ã€‚
         self.ethd.start()
 
     def run(self):
         while True:
-            self.processEvent(*self.evtq.get())  #´ÓevtqÖĞÈ¡³öÒ»¸ö¶ÓÁĞ£¬Õâ¸öµÄÖµÊÇÔÚproto.Connection.processRequestº¯ÊıÖĞ±»Ñ¹Èë¶ÓÁĞµÄ
+            self.processEvent(*self.evtq.get())  #ä»evtqä¸­å–å‡ºä¸€ä¸ªé˜Ÿåˆ—ï¼Œè¿™ä¸ªçš„å€¼æ˜¯åœ¨proto.Connection.processRequestå‡½æ•°ä¸­è¢«å‹å…¥é˜Ÿåˆ—çš„
 
     def hook(self, ident, func = None, queue = None, origin = None):
-        return Hook(self, ident, func, queue, origin) #·µ»ØµÄÊÇÒ»¸öHookÀàĞÍµÄ¶ÔÏó
+        return Hook(self, ident, func, queue, origin) #è¿”å›çš„æ˜¯ä¸€ä¸ªHookç±»å‹çš„å¯¹è±¡
 
-    def processEvent(self, ident, buf):  #¹Ø×¢ÕâÀïÖ»ÓĞÁ½¸ö²ÎÊı£¬
-        pol, ct = buf.unpack('1i')  #°´ÕÕ¸ñÊ½¶ÔÊı¾İ½øĞĞ½âÎö£¬ 1±íÊ¾ÎŞ·ûºÅµ¥×Ö½ÚÊıÖµ£¬
+    def processEvent(self, ident, buf):  #å…³æ³¨è¿™é‡Œåªæœ‰ä¸¤ä¸ªå‚æ•°ï¼Œ
+        pol, ct = buf.unpack('1i')  #æŒ‰ç…§æ ¼å¼å¯¹æ•°æ®è¿›è¡Œè§£æï¼Œ 1è¡¨ç¤ºæ— ç¬¦å·å•å­—èŠ‚æ•°å€¼ï¼Œ
         log.debug("study", "in Session.processEvent: ident=" + str(ident) + "\t pol=" + str(pol) + "\t ct=" + str(ct))
-        #Êä³öµÄÖµÎª£ºin Session.processEvent: ident=268435460     pol=1     ct=1
-        #ÆäÖĞ  polµÄÖµÊÇsuspendPolicy£¬±êÊ¶ÔİÍ£µÄ²ßÂÔ£¬1±íÊ¾Ö»ÔİÍ£µ±Ç°Ïß³Ì£¬ ct±íÊ¾±¾´ÎÖĞ¶ÏËù´¥·¢µÄÊÂ¼şÊı
+        #è¾“å‡ºçš„å€¼ä¸ºï¼šin Session.processEvent: ident=268435460     pol=1     ct=1
+        #å…¶ä¸­  polçš„å€¼æ˜¯suspendPolicyï¼Œæ ‡è¯†æš‚åœçš„ç­–ç•¥ï¼Œ1è¡¨ç¤ºåªæš‚åœå½“å‰çº¿ç¨‹ï¼Œ ctè¡¨ç¤ºæœ¬æ¬¡ä¸­æ–­æ‰€è§¦å‘çš„äº‹ä»¶æ•°
         for i in range(0,ct):
-            ek = buf.unpackU8() #»ñÈ¡ÊÂ¼şµÄÀàĞÍ±£´æµ½ekÖĞ,ekÎªjdwpĞ­ÒéÖĞµÄeventKind
+            ek = buf.unpackU8() #è·å–äº‹ä»¶çš„ç±»å‹ä¿å­˜åˆ°ekä¸­,ekä¸ºjdwpåè®®ä¸­çš„eventKind
             log.debug("study", "ek="+ str(ek))
-            im = unpack_impl[ek] #unpack_implÎª¶¨ÒåµÄÈ«¾Ö±äÁ¿£¬¸Ã±äÁ¿ÖĞ±£´æµÄÊÇº¯Êı,¸ù¾İeventKindµÄÖ®£¬»ñÈ¡¶ÔÓ¦µÄÊÂ¼şµÄ´¦Àíº¯Êı£¬±£´æµ½imÖĞ
+            im = unpack_impl[ek] #unpack_implä¸ºå®šä¹‰çš„å…¨å±€å˜é‡ï¼Œè¯¥å˜é‡ä¸­ä¿å­˜çš„æ˜¯å‡½æ•°,æ ¹æ®eventKindçš„ä¹‹ï¼Œè·å–å¯¹åº”çš„äº‹ä»¶çš„å¤„ç†å‡½æ•°ï¼Œä¿å­˜åˆ°imä¸­
             if im is None:
                 raise RequestError(ek)
-            evt = im(self, buf) #µ÷ÓÃ¾ßÌåµÄº¯Êı ÕâÀïimµ÷ÓÃµÄÊÇunpack_method_entryº¯Êı·µ»ØµÄÊÇrid, t, locÈı¸ö±äÁ¿¡£
-            with self.ectl: #ÇëÇóËø
+            evt = im(self, buf) #è°ƒç”¨å…·ä½“çš„å‡½æ•° è¿™é‡Œimè°ƒç”¨çš„æ˜¯unpack_method_entryå‡½æ•°è¿”å›çš„æ˜¯rid, t, locä¸‰ä¸ªå˜é‡ã€‚
+            with self.ectl: #è¯·æ±‚é”
                 hook = self.emap.get(evt[0])
-            if hook is not None:  #hook±äÁ¿µÄÀàĞÍÊÇHook
-                hook.put(evt[1:])  #µ÷ÓÃHookÀàĞÍÖĞµÄputº¯Êı
+            if hook is not None:  #hookå˜é‡çš„ç±»å‹æ˜¯Hook
+                hook.put(evt[1:])  #è°ƒç”¨Hookç±»å‹ä¸­çš„putå‡½æ•°
                           
     def load_classes(self):
         '''
-        1¡¢ÃüÁî  0x01 0x14
-        2¡¢×¢ÊÍ£ºÊÍ·ÅÒ»ÏµÁĞObject IDµÄĞÅÏ¢ÁĞ±í
-        3¡¢[VirtualMachine Command Set ][AllClassesWithGeneric Command (20)]
+        1ã€å‘½ä»¤  0x01 0x14
+        2ã€æ³¨é‡Šï¼šé‡Šæ”¾ä¸€ç³»åˆ—Object IDçš„ä¿¡æ¯åˆ—è¡¨
+        3ã€[VirtualMachine Command Set ][AllClassesWithGeneric Command (20)]
         '''
-		#ÔÚÕâÀï0x0114·Ö±ğ±íÊ¾command=0x01ºÍcommand set=0x14£¬¼´VisibleClassesºÍClassLoaderReference
+		#åœ¨è¿™é‡Œ0x0114åˆ†åˆ«è¡¨ç¤ºcommand=0x01å’Œcommand set=0x14ï¼Œå³VisibleClasseså’ŒClassLoaderReference
         log.debug("study", "call jdwp 0x01 14")
         code, buf = self.conn.request(0x0114, timeout=g_jdwp_request_timeout)
-        if code != 0: #Èç¹ûcode²»Îª0£¬ËµÃ÷·¢¸øvmµÄÇëÇó·¢Éú´íÎó¡£
+        if code != 0: #å¦‚æœcodeä¸ä¸º0ï¼Œè¯´æ˜å‘ç»™vmçš„è¯·æ±‚å‘ç”Ÿé”™è¯¯ã€‚
             raise RequestError(code)
 
         def load_class():
-            tag, tid, jni, gen, flags = buf.unpack('1t$$i')  #ÍÆ²âtÎªthead id ÎªÒ»¸öDWORDĞÍ£¬$±íÊ¾×Ö·û´®£¬½«Êı¾İ½âÎö³öÀ´
-            obj = self.pool(Class, self, tid) #±£´æÏà¹ØĞÅÏ¢µ½pool
+            tag, tid, jni, gen, flags = buf.unpack('1t$$i')  #æ¨æµ‹tä¸ºthead id ä¸ºä¸€ä¸ªDWORDå‹ï¼Œ$è¡¨ç¤ºå­—ç¬¦ä¸²ï¼Œå°†æ•°æ®è§£æå‡ºæ¥
+            obj = self.pool(Class, self, tid) #ä¿å­˜ç›¸å…³ä¿¡æ¯åˆ°pool
             obj.tag = tag
             obj.tid = tid
             obj.jni = jni
@@ -1254,9 +1310,9 @@ class Session(object):
     
     def suspend(self):
         ''''
-        1¡¢ÃüÁî  0x01 0x08
-        2¡¢×¢ÊÍ£ºÔİÍ£VM
-        3¡¢[VirtualMachine Command Set ][Suspend Command (8)]
+        1ã€å‘½ä»¤  0x01 0x08
+        2ã€æ³¨é‡Šï¼šæš‚åœVM
+        3ã€[VirtualMachine Command Set ][Suspend Command (8)]
         '''
         log.debug("study", "call jdwp 0x01 08")
         code, buf = self.conn.request(0x0108, '', g_jdwp_request_timeout)
@@ -1266,9 +1322,9 @@ class Session(object):
     @property
     def count(self):
         ''''
-        1¡¢ÃüÁî  0x01 0x08
-        2¡¢×¢ÊÍ£ºËÆºõÓĞÎÊÌâ
-        3¡¢[VirtualMachine Command Set ][Suspend Command (8)]
+        1ã€å‘½ä»¤  0x01 0x08
+        2ã€æ³¨é‡Šï¼šä¼¼ä¹æœ‰é—®é¢˜
+        3ã€[VirtualMachine Command Set ][Suspend Command (8)]
         '''
         log.debug("study", "call jdwp 0x01 08")
         code, buf = self.conn.request(0x0108, '', g_jdwp_request_timeout)
@@ -1277,9 +1333,9 @@ class Session(object):
 
     def resume(self):
         ''''
-        1¡¢ÃüÁî  0x01 0x09
-        2¡¢×¢ÊÍ£ºÔİÍ£VM
-        3¡¢[VirtualMachine Command Set ][Resume Command (9)]
+        1ã€å‘½ä»¤  0x01 0x09
+        2ã€æ³¨é‡Šï¼šæš‚åœVM
+        3ã€[VirtualMachine Command Set ][Resume Command (9)]
         '''
         log.debug("study", "call jdwp 0x01 09")
         code, buf = self.conn.request(0x0109, '', g_jdwp_request_timeout)
@@ -1288,9 +1344,9 @@ class Session(object):
 
     def exit(self, code = 0):
         ''''
-        1¡¢ÃüÁî  0x01 0x0A
-        2¡¢×¢ÊÍ£ºÖÕÖ¹VM
-        3¡¢[VirtualMachine Command Set ][Exit Command (10)]
+        1ã€å‘½ä»¤  0x01 0x0A
+        2ã€æ³¨é‡Šï¼šç»ˆæ­¢VM
+        3ã€[VirtualMachine Command Set ][Exit Command (10)]
         '''
         conn = self.conn
         buf = conn.buffer()
@@ -1302,9 +1358,9 @@ class Session(object):
 
     def threads(self, name=None):
         ''''
-        1¡¢ÃüÁî  0x01 0x04
-        2¡¢×¢ÊÍ£ºÖÕÖ¹VM
-        3¡¢[VirtualMachine Command Set ][AllThreads Command (4)]
+        1ã€å‘½ä»¤  0x01 0x04
+        2ã€æ³¨é‡Šï¼šç»ˆæ­¢VM
+        3ã€[VirtualMachine Command Set ][AllThreads Command (4)]
         '''
         pool = self.pool
         log.debug("study", "call jdwp 0x01 04")
@@ -1322,14 +1378,16 @@ class Session(object):
             if rx_dalvik_tname.match(name):
                 seq = (t for t in seq if t.name == name)
             else:
-                seq = (t for t in seq if t.name.split(' ',1)[-1] == name)
+                name = str(name)
+                name = name if not re.match('^\d+$', name) else '<' + name + '>'
+                seq = (t for t in seq if name in t.name.split(' ',1))
         return andbug.data.view(seq)
     
     
     def vmCapability(self):
         '''
-        º¯Êı¹¦ÄÜ£ºÍ¨¹ıµ÷ÓÃjdwpÖ¸Áî£¬»ñÈ¡vmËùÖ§³ÖµÄ¹¦ÄÜµÄĞÅÏ¢
-        ×¢£º Capabilities Command (12)
+        å‡½æ•°åŠŸèƒ½ï¼šé€šè¿‡è°ƒç”¨jdwpæŒ‡ä»¤ï¼Œè·å–vmæ‰€æ”¯æŒçš„åŠŸèƒ½çš„ä¿¡æ¯
+        æ³¨ï¼š Capabilities Command (12)
             CapabilitiesNew Command (17)
         '''
         log.debug("study", "call jdwp 0x01 0c Capabilities Command")
@@ -1358,19 +1416,19 @@ class Object(Value):
         self.oid = oid
 
     def __repr__(self):
-        return '<obj %s   %x>' % (self.jni, self.oid)
+        return '<obj %s #%x>' % (self.jni, self.oid)
     
 #    def __str__(self):
 #        return str(self.fields.values())
-    def __str__(self):    
+    def __str__(self):
         return str("%s <%s>" % (str(self.jni), str(self.oid)))
     
     def genJson(self):
         '''
-        º¯Êı¹¦ÄÜ£ºÎª½«Êı¾İÒÔjson¸ñÊ½Êä³ö×ö×¼±¸
-        ²ÎÊı£ºÎŞ
-        ·µ»ØÖµ£ºdict»òlist
-        author£ºanbc
+        å‡½æ•°åŠŸèƒ½ï¼šä¸ºå°†æ•°æ®ä»¥jsonæ ¼å¼è¾“å‡ºåšå‡†å¤‡
+        å‚æ•°ï¼šæ— 
+        è¿”å›å€¼ï¼šdictæˆ–list
+        authorï¼šanbc
         '''
         data = {}
         data["object_id"] = self.oid
@@ -1398,9 +1456,9 @@ class Object(Value):
         log.debug("study", "in unpackFrom oid(object_id)=" + str(oid))
         if not oid: return None         
         log.debug("study", "in unpackFrom impl=" + str(impl))
-        return sess.pool(impl, sess, oid) #Í¨¹ıpool·½·¨´´½¨Ò»¸öStringÀà»òArrayÀàµÄ¶ÔÏó£¬²¢·µ»ØÕâ¸ö¶ÔÏó
+        return sess.pool(impl, sess, oid) #é€šè¿‡poolæ–¹æ³•åˆ›å»ºä¸€ä¸ªStringç±»æˆ–Arrayç±»çš„å¯¹è±¡ï¼Œå¹¶è¿”å›è¿™ä¸ªå¯¹è±¡
 
-    #½«oid²ÎÊıÑ¹ÈëjdwpÃüÁîµÄÊäÈë²ÎÊı
+    #å°†oidå‚æ•°å‹å…¥jdwpå‘½ä»¤çš„è¾“å…¥å‚æ•°
     def packTo(self, buf):
         buf.packObjectId(self.oid)
 
@@ -1414,9 +1472,9 @@ class Object(Value):
 
     def load_refType(self):
         '''
-        1¡¢ÃüÁî  0x09 0x01
-        2¡¢×¢ÊÍ£º·µ»ØÒ»¸öÕıÔÚÔËĞĞµÄ¶ÔÏóµÄÒıÓÃÀàĞÍ
-        3¡¢[ObjectReference Command Set (9)][ReferenceType Command (1)]
+        1ã€å‘½ä»¤  0x09 0x01
+        2ã€æ³¨é‡Šï¼šè¿”å›ä¸€ä¸ªæ­£åœ¨è¿è¡Œçš„å¯¹è±¡çš„å¼•ç”¨ç±»å‹
+        3ã€[ObjectReference Command Set (9)][ReferenceType Command (1)]
         '''
         conn = self.sess.conn
         buf = conn.buffer()
@@ -1441,9 +1499,9 @@ class Object(Value):
     @property
     def fields(self):
         '''
-        1¡¢ÃüÁî  0x09 0x02
-        2¡¢×¢ÊÍ£º»ñµÃ³ÉÔ±±äÁ¿µÄÖµ
-        3¡¢[ObjectReference Command Set (9) ][GetValues Command (2)]
+        1ã€å‘½ä»¤  0x09 0x02
+        2ã€æ³¨é‡Šï¼šè·å¾—æˆå‘˜å˜é‡çš„å€¼
+        3ã€[ObjectReference Command Set (9) ][GetValues Command (2)]
         '''
         sess = self.sess
         conn = self.conn
@@ -1538,7 +1596,7 @@ class Array(Object):
         elif self.jni == '[B':
            
             '''
-            #°´ÕÕbufferÊµ¼Ê³¤¶ÈÕ¹Ê¾
+            #æŒ‰ç…§bufferå®é™…é•¿åº¦å±•ç¤º
             output=''
             count=0
             len = self.length
@@ -1548,13 +1606,13 @@ class Array(Object):
                 count+=1
             '''
             '''
-            #Ô­Ê¼Êı¾İÕ¹Ê¾£¬ÓÃÓÚºóĞø³ÌĞò´¦Àí            
+            #åŸå§‹æ•°æ®å±•ç¤ºï¼Œç”¨äºåç»­ç¨‹åºå¤„ç†            
             output = []
             for c in data:
                 output.append(c)
             '''
             
-            #Õ¹Ê¾ÓĞĞ§Êı¾İ
+            #å±•ç¤ºæœ‰æ•ˆæ•°æ®
             output=''
             for c in data:
                 if c!=0:
@@ -1584,10 +1642,10 @@ class Array(Object):
     
     def genJson(self):
         '''
-        º¯Êı¹¦ÄÜ£ºÎª½«Êı¾İÒÔjson¸ñÊ½Êä³ö×ö×¼±¸
-        ²ÎÊı£ºÎŞ
-        ·µ»ØÖµ£ºdict»òlist
-        author£º
+        å‡½æ•°åŠŸèƒ½ï¼šä¸ºå°†æ•°æ®ä»¥jsonæ ¼å¼è¾“å‡ºåšå‡†å¤‡
+        å‚æ•°ï¼šæ— 
+        è¿”å›å€¼ï¼šdictæˆ–list
+        authorï¼š
         '''
         arrayData = self.getSlice()
         data ={}
@@ -1598,7 +1656,7 @@ class Array(Object):
         
 
         if self.jni == '[B':
-            #Õ¹Ê¾ÓĞĞ§Êı¾İ
+            #å±•ç¤ºæœ‰æ•ˆæ•°æ®
             output=''
             for c in arrayData:
                 if c>=33 and c<=126:
@@ -1611,16 +1669,16 @@ class Array(Object):
         return data
        
            
-    @property  #½«length·½·¨µ±×÷ÊôĞÔÊ¹ÓÃ
+    @property  #å°†lengthæ–¹æ³•å½“ä½œå±æ€§ä½¿ç”¨
     def length(self):
         '''
-        1¡¢ÃüÁî  0x0d 0x01
-        2¡¢×¢ÊÍ£º·µ»ØÊı×éµÄ³¤¶È
-        3¡¢[ArrayReference Command Set (13)][Length Command (1)]
+        1ã€å‘½ä»¤  0x0d 0x01
+        2ã€æ³¨é‡Šï¼šè¿”å›æ•°ç»„çš„é•¿åº¦
+        3ã€[ArrayReference Command Set (13)][Length Command (1)]
         '''
         conn = self.conn
         buf = conn.buffer()
-        self.packTo(buf)  #µ÷ÓÃ¸¸ÀàObjectµÄ·½·¨£¬»ñÈ¡object idµÄÖµ
+        self.packTo(buf)  #è°ƒç”¨çˆ¶ç±»Objectçš„æ–¹æ³•ï¼Œè·å–object idçš„å€¼
         log.debug("study", "call jdwp 0x0d 01")
         code, buf = conn.request(0x0d01, buf.data(), g_jdwp_request_timeout)        
         if code != 0:
@@ -1629,9 +1687,9 @@ class Array(Object):
 
     def getSlice(self, first=0, last=-1):
         '''
-        1¡¢ÃüÁî  0x0d 0x02
-        2¡¢×¢ÊÍ£º»ñµÃÖ¸¶¨Êı×éÔªËØµÄÖµ£¬slice ÊÇÆ¬¶ÎµÄÒâË¼
-        3¡¢[ArrayReference Command Set (13)][GetValues Command (2)]
+        1ã€å‘½ä»¤  0x0d 0x02
+        2ã€æ³¨é‡Šï¼šè·å¾—æŒ‡å®šæ•°ç»„å…ƒç´ çš„å€¼ï¼Œslice æ˜¯ç‰‡æ®µçš„æ„æ€
+        3ã€[ArrayReference Command Set (13)][GetValues Command (2)]
         '''
         length = self.length
         if first > length:
@@ -1654,9 +1712,9 @@ class Array(Object):
 
         conn = self.conn
         buf = conn.buffer()
-        self.packTo(buf)  #´«Èë²ÎÊıobject id
-        buf.packInt(first) #´«ÈëÊı×éµÄÆğÊ¼Î»ÖÃ
-        buf.packInt(count) #´«ÈëÒª»ñÈ¡µÄÊı×éµÄ¸öÊı
+        self.packTo(buf)  #ä¼ å…¥å‚æ•°object id
+        buf.packInt(first) #ä¼ å…¥æ•°ç»„çš„èµ·å§‹ä½ç½®
+        buf.packInt(count) #ä¼ å…¥è¦è·å–çš„æ•°ç»„çš„ä¸ªæ•°
         log.debug("study", "call jdwp 0x0d 02")
         code, buf = conn.request(0x0d02, buf.data(), g_jdwp_request_timeout)
         if code != 0:
@@ -1666,20 +1724,20 @@ class Array(Object):
         
         sess = self.sess
         if tag in OBJECT_TAGS:
-            return list(unpack_value(sess, buf) for i in range(ct))  #´¦Àí¶ÔÏóÀàĞÍµÄÔªËØ
+            return list(unpack_value(sess, buf) for i in range(ct))  #å¤„ç†å¯¹è±¡ç±»å‹çš„å…ƒç´ 
         else:
-            return list(unpack_value(sess, buf, tag) for i in range(ct)) #´¦ÀíÖ÷ÀàĞÍµÄÔªËØ
+            return list(unpack_value(sess, buf, tag) for i in range(ct)) #å¤„ç†ä¸»ç±»å‹çš„å…ƒç´ 
 
 PRIMITIVE_TAGS = set(ord(c) for c in 'BCFDIJSVZ')
 OBJECT_TAGS = set(ord(c) for c in 'stglcL')
 
-#ÔÚstaticsÎÄ¼şµÄandbug.screed.item("%s = %s" % (k, v))´úÂëÖĞÓÃµ½vm.StringÀàÖĞµÄ__str__º¯Êı£¬½ø¶øµ÷ÓÃdata(self)·¢Æğ"call jdwp 0x0A 01"ÃüÁî
+#åœ¨staticsæ–‡ä»¶çš„andbug.screed.item("%s = %s" % (k, v))ä»£ç ä¸­ç”¨åˆ°vm.Stringç±»ä¸­çš„__str__å‡½æ•°ï¼Œè¿›è€Œè°ƒç”¨data(self)å‘èµ·"call jdwp 0x0A 01"å‘½ä»¤
 class String(Object):
     def __repr__(self):
         return repr(str(self))
 
     def __str__(self):
-        return self.data  #ÔÚÕâÀïµ÷ÓÃdataº¯Êı
+        return self.data  #åœ¨è¿™é‡Œè°ƒç”¨dataå‡½æ•°
 
     def genJson(self):
         return repr(str(self))
@@ -1688,17 +1746,17 @@ class String(Object):
     @property
     def data(self):
         '''
-        1¡¢ÃüÁî  0x0a 0x01
-        2¡¢×¢ÊÍ£º·µ»ØÒ»¸ö×Ö·û´®ÖĞ°üº¬µÄ×Ö·ûÄÚÈİ
-        3¡¢[StringReference Command Set (10)][Value Command (1)]
+        1ã€å‘½ä»¤  0x0a 0x01
+        2ã€æ³¨é‡Šï¼šè¿”å›ä¸€ä¸ªå­—ç¬¦ä¸²ä¸­åŒ…å«çš„å­—ç¬¦å†…å®¹
+        3ã€[StringReference Command Set (10)][Value Command (1)]
         '''
         conn = self.conn
         buf = conn.buffer()
-        self.packTo(buf) #½«oid²ÎÊıÑ¹ÈëjdwpÃüÁîµÄÊäÈë²ÎÊı
+        self.packTo(buf) #å°†oidå‚æ•°å‹å…¥jdwpå‘½ä»¤çš„è¾“å…¥å‚æ•°
         
         log.debug("study", "buf=" + str(buf))
         log.debug("study", "call jdwp 0x0A 01")
-        code, buf = conn.request(0x0A01, buf.data(), g_jdwp_request_timeout)  #ĞèÒªÊäÈëstring¶ÔÏóµÄobject idµÄÖµ
+        code, buf = conn.request(0x0A01, buf.data(), g_jdwp_request_timeout)  #éœ€è¦è¾“å…¥stringå¯¹è±¡çš„object idçš„å€¼
         if code != 0:        
             raise RequestError(code)
         
@@ -1711,25 +1769,25 @@ def register_unpack_value(tag, func):
     #print "func=" + str(func)
     for t in tag:
         log.debug("study", "ord(t)=" + str(ord(t)))
-        unpack_value_impl[ord(t)] = func  # ord(t)½«×Ö·û×ª»»³ÉasciiÂë
+        unpack_value_impl[ord(t)] = func  # ord(t)å°†å­—ç¬¦è½¬æ¢æˆasciiç 
 
 register_unpack_value('B', lambda p, b: b.unpackU8())  #BYTE 'B' - a byte value (1 byte).  
 register_unpack_value('C', lambda p, b: chr(b.unpackU16())) #CHAR 'C' - a character value (2 bytes).   
-register_unpack_value('F', lambda p, b: b.unpackFloat()) #TODO: TEST  floatĞÍ
-register_unpack_value('D', lambda p, b: b.unpackDouble()) #TODO:TEST  doubleĞÍ
-register_unpack_value('I', lambda p, b: b.unpackInt())# int ĞÍ
-register_unpack_value('J', lambda p, b: b.unpackLong()) #long ĞÍ
-register_unpack_value('S', lambda p, b: b.unpackShort()) #TODO: TEST shortĞÍ
-register_unpack_value('V', lambda p, b: b.unpackVoid()) #²»Çå³şÊ²Ã´ÀàĞÍ
-register_unpack_value('Z', lambda p, b: (True if b.unpackU8() else False)) #²»Çå³şÊ²Ã´ÀàĞÍ
-register_unpack_value('L', Object.unpackFrom)  #¶ÔÏóÀàĞÍ
+register_unpack_value('F', lambda p, b: b.unpackFloat()) #TODO: TEST  floatå‹
+register_unpack_value('D', lambda p, b: b.unpackDouble()) #TODO:TEST  doubleå‹
+register_unpack_value('I', lambda p, b: b.unpackInt())# int å‹
+register_unpack_value('J', lambda p, b: b.unpackLong()) #long å‹
+register_unpack_value('S', lambda p, b: b.unpackShort()) #TODO: TEST shortå‹
+register_unpack_value('V', lambda p, b: b.unpackVoid()) #ä¸æ¸…æ¥šä»€ä¹ˆç±»å‹
+register_unpack_value('Z', lambda p, b: (True if b.unpackU8() else False)) #ä¸æ¸…æ¥šä»€ä¹ˆç±»å‹
+register_unpack_value('L', Object.unpackFrom)  #å¯¹è±¡ç±»å‹
 register_unpack_value('tglc', Object.unpackFrom) #TODO: IMPL
-register_unpack_value('s', String.unpackFrom) #×Ö·û´®ĞÍ
-register_unpack_value('[', Array.unpackFrom) #Êı×éĞÍ
+register_unpack_value('s', String.unpackFrom) #å­—ç¬¦ä¸²å‹
+register_unpack_value('[', Array.unpackFrom) #æ•°ç»„å‹
 
 def get_variable_type(jni_signature):
     '''
-    Í¨¹ıjni_signatureµÄÖµ·µ»Ø£¬±äÁ¿µÄÀàĞÍ
+    é€šè¿‡jni_signatureçš„å€¼è¿”å›ï¼Œå˜é‡çš„ç±»å‹
     '''
     if jni_signature=="[":
         return "ARRAY"
@@ -1747,14 +1805,13 @@ def get_variable_type(jni_signature):
         return "INT"
     elif jni_signature=="J":
         return "LONG"
-    elif jni_signature=="B":
-        return "BYTE"
-    elif jni_signature=="B":
-        return "BYTE"
+    elif jni_signature=="Z":
+        return "BOOLEAN"
 
 
-#ÔÚº¯ÊıÖĞ¸ù¾İ»ñÈ¡µÄtagµÄ²»Í¬£¬µ÷ÓÃ²»Í¬µÄº¯Êı½øĞĞ´¦Àí£¬ËùÓĞ´¦Àíº¯Êı¶¼±£´æÔÚunpack_value_impl±äÁ¿ÖĞ
-#ÔÚArray.getSliceº¯ÊıÖĞ£¬unpack_valueº¯ÊıÊ±´«ÈëµÄtag²ÎÊı
+
+#åœ¨å‡½æ•°ä¸­æ ¹æ®è·å–çš„tagçš„ä¸åŒï¼Œè°ƒç”¨ä¸åŒçš„å‡½æ•°è¿›è¡Œå¤„ç†ï¼Œæ‰€æœ‰å¤„ç†å‡½æ•°éƒ½ä¿å­˜åœ¨unpack_value_implå˜é‡ä¸­
+#åœ¨Array.getSliceå‡½æ•°ä¸­ï¼Œunpack_valueå‡½æ•°æ—¶ä¼ å…¥çš„tagå‚æ•°
 def unpack_value(sess, buf, tag = None):
     if tag is None: tag = buf.unpackU8()
     fn = unpack_value_impl[tag]
@@ -1794,6 +1851,6 @@ def pack_value(sess, buf, value, tag = None):
 
 def connect(pid, dev=None):
     'connects using proto.forward() to the process associated with this context'
-    conn = andbug.proto.connect(andbug.proto.forward(pid, dev))  #connÊÇConnection(Thread)ÀàĞÍµÄÒ»¸ö¶ÔÏó
+    conn = andbug.proto.connect(andbug.proto.forward(pid, dev))  #connæ˜¯Connection(Thread)ç±»å‹çš„ä¸€ä¸ªå¯¹è±¡
     return andbug.vm.Session(conn)
 

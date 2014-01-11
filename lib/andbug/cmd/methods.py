@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+Ôªø#!/usr/bin/env python
 # -*- coding: utf-8 -*- 
 
 ## Copyright 2011, IOActive, Inc. All rights reserved.
@@ -20,17 +20,15 @@
 import andbug.command, andbug.options
 from andbug import log
 
-@andbug.command.action('<class-path> [<method-query>]')
+@andbug.command.action('<class-path> [<method-query>]', aliases=('m',))
 def methods(ctxt, cpath, mquery=None):
     'lists the methods of a class'
-    cpath, mname, mjni = andbug.options.parse_mquery(cpath, mquery)  #cpath=Lcom/example/test/MainActivity;     mname=onCreate [∫Ø ˝√˚]  mjni=None£€ø…ƒ‹ «≤Œ ˝–≈œ¢≤ª»∑∂®£› 
+    cpath, mname, mjni = andbug.options.parse_mquery(cpath, mquery)  #cpath=Lcom/example/test/MainActivity;     mname=onCreate [ÂáΩÊï∞Âêç]  mjni=NoneÔºªÂèØËÉΩÊòØÂèÇÊï∞‰ø°ÊÅØ‰∏çÁ°ÆÂÆöÔºΩ 
     infor = "cpath="+ str(cpath) + "\t mname="+ str(mname) + "\t mjni=" + str(mjni);            
     log.debug("study", infor);
     
     
     title = "Methods " + ((cpath + "->" + mquery) if mquery else (cpath))
     with andbug.screed.section(title):
-        for m in ctxt.sess.classes(cpath).methods(name=mname, jni=mjni):
-            #str(m) ¿‡À∆»Áœ¬–≈œ¢com.example.test.MainActivity.onCreate(Landroid/os/Bundle;)V  m÷µµƒ¿‡–Õ «<class 'andbug.vm.Method'>
-            andbug.screed.item(str(m)) 
-
+    	for m in ctxt.sess.classes(cpath).methods(filtername=mname, jni=mjni):
+	    	andbug.screed.item(str(m))

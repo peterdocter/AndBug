@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+ï»¿#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 ## Copyright 2011, IOActive, Inc. All rights reserved.
 ##
@@ -27,24 +27,24 @@ class TestCommand(Command):
     user_options = []
 
     def initialize_options(self):
-        self._dir = os.getcwd()  #ÓÃÀ´»ñµÃ³ÌĞòµÄµ±Ç°»·¾³
+        self._dir = os.getcwd()  #ç”¨æ¥è·å¾—ç¨‹åºçš„å½“å‰ç¯å¢ƒ
 
     def finalize_options(self):
         pass
 
     def run(self):
         testfiles = [ ]
-		#glob »ñÈ¡Ö¸¶¨Ä¿Â¼µÄËùÓĞ.pyÎÄ¼ş 
-		#splitext º¯ÊıÓÃÓÚ·Ö½âÎÄ¼şÃûµÄÀ©Õ¹Ãû
-		#basename() È¥µôÄ¿Â¼Â·¾¶, ·µ»ØÎÄ¼şÃû
-		#b='.'.join('hello','world') ÔòbÎª¡°hello.world¡±
+		#glob è·å–æŒ‡å®šç›®å½•çš„æ‰€æœ‰.pyæ–‡ä»¶ 
+		#splitext å‡½æ•°ç”¨äºåˆ†è§£æ–‡ä»¶åçš„æ‰©å±•å
+		#basename() å»æ‰ç›®å½•è·¯å¾„, è¿”å›æ–‡ä»¶å
+		#b='.'.join('hello','world') åˆ™bä¸ºâ€œhello.worldâ€
         for t in glob(pjoin(self._dir, 'tests', '*.py')):
             if not t.endswith('__init__.py'):
                 testfiles.append('.'.join(
                     ['tests', splitext(basename(t))[0]])
                 )
 
-		#Ê¹ÓÃ²âÊÔ¿ò¼Ü½øĞĞ²âÊÔµÄ¹¤×÷
+		#ä½¿ç”¨æµ‹è¯•æ¡†æ¶è¿›è¡Œæµ‹è¯•çš„å·¥ä½œ
         tests = TestLoader().loadTestsFromNames(testfiles)
         t = TextTestRunner(verbosity = 1)
         t.run(tests)
@@ -63,7 +63,7 @@ class CleanCommand(Command):
     def finalize_options(self):
         pass
 
-	#¶Ô¡°.pyc¡±ÎÄ¼ş½øĞĞÉ¾³ı
+	#å¯¹â€œ.pycâ€æ–‡ä»¶è¿›è¡Œåˆ é™¤
     def run(self):
         for clean_me in self._clean_me:
             try:

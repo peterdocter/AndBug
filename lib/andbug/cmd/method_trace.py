@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+﻿#!/usr/bin/env python
 # -*- coding: utf-8 -*- 
 
 ## Copyright 2011, IOActive, Inc. All rights reserved.

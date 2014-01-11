@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+ï»¿#!/usr/bin/env python
 # -*- coding: utf-8 -*- 
 
 ## Copyright 2011, IOActive, Inc. All rights reserved.
@@ -22,16 +22,16 @@ import andbug.command, andbug.screed, andbug.options
 @andbug.command.action('<threadName frameInfor>', aliases=('fv',))
 def frame_value(ctxt, threadName, frameName):
     '''
-    º¯Êı¹¦ÄÜ£º¸ù¾İÖ¸¶¨µÄÏß³ÌÃû³Æ£¬¶ÑÕ»Î»ÖÃ£¬»ñÈ¡ÏàÓ¦¶ÑÕ»ÖĞ²ÎÊıµÄĞÅÏ¢
+    å‡½æ•°åŠŸèƒ½ï¼šæ ¹æ®æŒ‡å®šçš„çº¿ç¨‹åç§°ï¼Œå †æ ˆä½ç½®ï¼Œè·å–ç›¸åº”å †æ ˆä¸­å‚æ•°çš„ä¿¡æ¯
     '''
     
     thread = ctxt.sess.threads(threadName)
-    frames = thread.frames()  #!!!!!!µ÷ÓÃÊ§°Ü£¬»¹Ã»ÕÒµ½Ô­Òò
-    for f in thread.frames: #t.framesÊÇ·µ»Øµ±Ç°µÄ¶ÑÕ»ĞÅÏ¢
+    frames = thread.frames()  #!!!!!!è°ƒç”¨å¤±è´¥ï¼Œè¿˜æ²¡æ‰¾åˆ°åŸå› 
+    for f in thread.frames: #t.framesæ˜¯è¿”å›å½“å‰çš„å †æ ˆä¿¡æ¯
         name = str(f.loc)
         if name.find(frameName)==-1:
             continue
-        if f.native:  #ÅĞ¶Ï¶ÑÕ»ÖĞº¯ÊıµÄÀàĞÍ£¬ÊÇ·ñÊÇÄÚ²¿º¯Êı¡£Èçdalvik.system.NativeStart.main([Ljava/lang/String;)V <native>
+        if f.native:  #åˆ¤æ–­å †æ ˆä¸­å‡½æ•°çš„ç±»å‹ï¼Œæ˜¯å¦æ˜¯å†…éƒ¨å‡½æ•°ã€‚å¦‚dalvik.system.NativeStart.main([Ljava/lang/String;)V <native>
             name += ' <native>'
         with andbug.screed.refer(name):
             for var_name in f:                             

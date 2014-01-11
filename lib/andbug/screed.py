@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+ï»¿#!/usr/bin/env python
 # -*- coding: utf-8 -*- 
 
 ## Copyright 2011, IOActive, Inc. All rights reserved.
@@ -15,7 +15,7 @@
 ## You should have received a copy of the GNU Lesser General Public License
 ## along with AndBug.  If not, see <http://www.gnu.org/licenses/>.
 
-#±»ÀàµÄ×÷ÓÃÔÚÓÚ½øĞĞ¸ñÊ½»¯Êä³ö£¬Ä¿µÄÔÚÓÚºÍÓÃ»§½»»¥£¬Ä¿Ç°ÊÇÔÚshellÖĞ
+#è¢«ç±»çš„ä½œç”¨åœ¨äºè¿›è¡Œæ ¼å¼åŒ–è¾“å‡ºï¼Œç›®çš„åœ¨äºå’Œç”¨æˆ·äº¤äº’ï¼Œç›®å‰æ˜¯åœ¨shellä¸­
 '''
 Screed (plural Screeds)
 
@@ -25,7 +25,7 @@ Screed (plural Screeds)
 4. A smooth flat layer of concrete or similar material.
 5. A python module for formatting text output ***
 
-Written language has evolved(·¢Õ¹) concurrent£¨²¢·¢£© with the advent£¨À´ÁÙ£© of movable£¨±ä¶¯£© type and
+Written language has evolved(å‘å±•) concurrentï¼ˆå¹¶å‘ï¼‰ with the adventï¼ˆæ¥ä¸´ï¼‰ of movableï¼ˆå˜åŠ¨ï¼‰ type and
 the information age, introducing a number of typographic conventions that are
 used to impose structure.  The Screed format employs a subset of these 
 conventions to structure output in way that is easily parsed by software or 
@@ -43,12 +43,12 @@ import re
 import log
 
 
-#ÓÃÓÚÕıÔò±í´ïÊ½
+#ç”¨äºæ­£åˆ™è¡¨è¾¾å¼
 rx_blocksep = re.compile('[\r\n][ \t]*[\r\n]+')  
 rx_linesep = re.compile('[\r\n][ \t]*')
 
 def body(data):
-    blocks = rx_blocksep.split(data.strip()) #stripº¯Êı³ıÈ¥×Ö·û´®Ê×Î²µÄ¿Õ¸ñ
+    blocks = rx_blocksep.split(data.strip()) #stripå‡½æ•°é™¤å»å­—ç¬¦ä¸²é¦–å°¾çš„ç©ºæ ¼
 
     for block in blocks:
         block = block.strip()
@@ -58,7 +58,7 @@ def body(data):
             item(block[3:])
         else:
             text(block)
-#ÔËĞĞtput linuxÃüÁî£¬ ÓÃÀ´ÊµÏÖºÍÓÃ»§µÄ¸´ÔÓ½»Á÷£¬Èç¹â±êµÄÒÆ¶¯ºÍÊä³öÊı¾İÑÕÉ«µÄ±ä»¯ self.width = tput('cols', self.width)
+#è¿è¡Œtput linuxå‘½ä»¤ï¼Œ ç”¨æ¥å®ç°å’Œç”¨æˆ·çš„å¤æ‚äº¤æµï¼Œå¦‚å…‰æ ‡çš„ç§»åŠ¨å’Œè¾“å‡ºæ•°æ®é¢œè‰²çš„å˜åŒ– self.width = tput('cols', self.width)
 def tput(attr, alt=None):
     p = subprocess.Popen(('tput', attr), stdout=subprocess.PIPE, stderr=None) 
     p.wait()
@@ -85,12 +85,12 @@ class area(object):
     def create(self):
         pass
 '''
-__init__¡¢ __enter__¡¢ __exit__ Èı¸öº¯ÊıÊÇobjectÄ¬ÈÏ¶¨ÒåµÄ¡£
-Èı¸öº¯ÊıµÄ×÷ÓÃ·Ö±ğÊÇ£ºclassÉùÃ÷ÊÇµ÷ÓÃ__init__
-½øÈëwithÖ¸ÁîÊ±£¬µ÷ÓÃ__enter__º¯Êı
-Ìø³öwithÖ¸ÁîÊ±£¬µ÷ÓÃ__exit__º¯Êı
+__init__ã€ __enter__ã€ __exit__ ä¸‰ä¸ªå‡½æ•°æ˜¯objecté»˜è®¤å®šä¹‰çš„ã€‚
+ä¸‰ä¸ªå‡½æ•°çš„ä½œç”¨åˆ†åˆ«æ˜¯ï¼šclasså£°æ˜æ˜¯è°ƒç”¨__init__
+è¿›å…¥withæŒ‡ä»¤æ—¶ï¼Œè°ƒç”¨__enter__å‡½æ•°
+è·³å‡ºwithæŒ‡ä»¤æ—¶ï¼Œè°ƒç”¨__exit__å‡½æ•°
 
-¶øenter¡¢exit¡¢createº¯Êı²»ÊÇpythonÔ­ÓĞº¯Êı£¬ÊÇ×Ô¶¨ÒåµÄÓÃÀ´±»ÉÏÃæµ÷ÓÃµÄº¯Êı
+è€Œenterã€exitã€createå‡½æ•°ä¸æ˜¯pythonåŸæœ‰å‡½æ•°ï¼Œæ˜¯è‡ªå®šä¹‰çš„ç”¨æ¥è¢«ä¸Šé¢è°ƒç”¨çš„å‡½æ•°
 '''   
     
 
@@ -141,9 +141,9 @@ class surface(object):
         if output is None:
             output = sys.stdout
         self.output = output
-        self.tty = self.output.isatty() #isttyÅĞ¶ÏÎÄ¼şÊÇ·ñÊÇÒ»¸öÖÕ¶ËÉè±¸ÎÄ¼ş
+        self.tty = self.output.isatty() #isttyåˆ¤æ–­æ–‡ä»¶æ˜¯å¦æ˜¯ä¸€ä¸ªç»ˆç«¯è®¾å¤‡æ–‡ä»¶
         self.indent = []
-        self.textwrap = textwrap.TextWrapper() #ÎÄ±¾°ü×°ºÍÌî³ä
+        self.textwrap = textwrap.TextWrapper() #æ–‡æœ¬åŒ…è£…å’Œå¡«å……
 
     def __call__(self):
         return self
@@ -196,7 +196,7 @@ class surface(object):
             width = width / 4 # dd_c
 
         #hex = andbug.log.format_hex(data, self.current_indent, width)
-        hex = log.format_hex(data, self.current_indent, width)   #º¯ÊıµÄ¶¨Òå
+        hex = log.format_hex(data, self.current_indent, width)   #å‡½æ•°çš„å®šä¹‰
         self.write(hex)
         self.newline()
 
@@ -248,7 +248,7 @@ class scheme(object):
         if not depth: return ''
         return (self.c256 if (depth == 256) else self.c16).get(tag, '\x1B[0m')
 
-#¶¨ÒåÏÔÊ¾µÄ·½Ê½
+#å®šä¹‰æ˜¾ç¤ºçš„æ–¹å¼
 redmedicine = scheme((
     ('##',  9,  69),
     ('--', 15, 254),
@@ -273,7 +273,7 @@ class ascii(surface):
         self.prev_tag = ''
         self.palette = palette
 
-    def transition(self, next): #×ª»»
+    def transition(self, next): #è½¬æ¢
         prev = self.prev_tag
         self.prev_tag = next
         #print "TRANSITION", repr(prev), "->", repr(next)
@@ -292,7 +292,7 @@ class ascii(surface):
             self.newline()
             self.prev_tag = '00'
 
-    def create_section(self, title): #section£Û²¿·Ö£İ
+    def create_section(self, title): #sectionï¼»éƒ¨åˆ†ï¼½
         self.create_tagged_area( '##', title)
 
     def enter_section(self, title):
@@ -301,7 +301,7 @@ class ascii(surface):
     def exit_section(self, title):
         self.exit_tagged_area()
 
-    def create_item(self, title): #item£ÛÏîÄ¿£İ
+    def create_item(self, title): #itemï¼»é¡¹ç›®ï¼½
         self.create_tagged_area( '--', title)
 
     def enter_item(self, title):
@@ -310,7 +310,7 @@ class ascii(surface):
     def exit_item(self, title):
         self.exit_tagged_area()
 
-    def create_meta(self, title):#meta£ÛÔªµÄ£İ
+    def create_meta(self, title):#metaï¼»å…ƒçš„ï¼½
         self.create_tagged_area( '//', title)
 
     def enter_meta(self, title):
@@ -319,7 +319,7 @@ class ascii(surface):
     def exit_meta(self, title):
         self.exit_tagged_area()
 
-    def create_refer(self, title):#refer£ÛÉæ¼°£İ
+    def create_refer(self, title):#referï¼»æ¶‰åŠï¼½
         self.create_tagged_area( '::', title)
 
     def enter_refer(self, title):
@@ -340,7 +340,7 @@ class ascii(surface):
         tag += ' '
         self.next_indent = self.current_indent + ' ' * len(tag)
         self.wrap_line(self.current_indent + tag + banner, self.next_indent)
-        self.write("\x1B[0m")  #´ıÊäÈëÌáÊ¾·ûºÅ¡°>>¡±
+        self.write("\x1B[0m")  #å¾…è¾“å…¥æç¤ºç¬¦å·â€œ>>â€
 
     def enter_tagged_area(self):
         self.push_indent(self.next_indent)
@@ -354,11 +354,11 @@ class ascii(surface):
         if self.prev_tag != '00':
             self.prev_tag = next
         #print 'EXIT ->', repr(self.prev_tag)
-    #»ñÈ¡ÖÕ¶ËµÄÏà¹ØĞÅÏ¢
+    #è·å–ç»ˆç«¯çš„ç›¸å…³ä¿¡æ¯
     def pollcap(self):
         if not self.tty: return
-        self.width = tput('cols', self.width)  #ÏÔÊ¾ÖÕ¶ËµÄÁĞÊı£¬def tput(attr, alt=None):
-        self.depth = tput('colors', self.depth)  #»ñÈ¡ÖÕ¶ËµÄÑÕÉ«ĞÅÏ¢      
+        self.width = tput('cols', self.width)  #æ˜¾ç¤ºç»ˆç«¯çš„åˆ—æ•°ï¼Œdef tput(attr, alt=None):
+        self.depth = tput('colors', self.depth)  #è·å–ç»ˆç«¯çš„é¢œè‰²ä¿¡æ¯      
         self.textwrap.width = self.width
 
 OUTPUT = None
@@ -370,14 +370,14 @@ def scheme():
     else:
         return PALETTE
 
-def output(): #outputº¯Êı·µ»ØµÄÊÇÒ»¸öasciiÀà
+def output(): #outputå‡½æ•°è¿”å›çš„æ˜¯ä¸€ä¸ªasciiç±»
     global OUTPUT
     if OUTPUT is None:
         OUTPUT = ascii(palette=scheme())
     return OUTPUT
 
 	
-#ÓÃÓÚ²âÊÔµÄº¯Êı
+#ç”¨äºæµ‹è¯•çš„å‡½æ•°
 if __name__ == '__main__':
     with section('Introduction'):
         text('''Since the sentence detection algorithm relies on string.lowercase for the definition of lowercase letter, and a convention of using two spaces after a period to separate sentences on the same line, it is specific to English-language texts.''')

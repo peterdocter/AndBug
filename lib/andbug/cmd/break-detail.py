@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+ï»¿#!/usr/bin/env python
 # -*- coding: utf-8 -*- 
 
 ## Copyright 2011, IOActive, Inc. All rights reserved.
@@ -21,12 +21,12 @@ import andbug.command, andbug.screed, andbug.options
 from Queue import Queue
 
 '''
-¸ÃÃüÁîÓÃÀ´¸ú×Ù´¥·¢¶ÏµãÊ±¸÷²ÎÊıµÄĞÅÏ¢
+è¯¥å‘½ä»¤ç”¨æ¥è·Ÿè¸ªè§¦å‘æ–­ç‚¹æ—¶å„å‚æ•°çš„ä¿¡æ¯
 '''
 
 def parse_frame_detail(frame):
     '''
-    º¯Êı¹¦ÄÜ£º½âÎöÒ»¸ö¶ÑÕ»Ö¡µÄÏêÏ¸Çé¿ö
+    å‡½æ•°åŠŸèƒ½ï¼šè§£æä¸€ä¸ªå †æ ˆå¸§çš„è¯¦ç»†æƒ…å†µ
     '''
     all_var_infor = frame.values
     for var_name in all_var_infor:
@@ -35,16 +35,16 @@ def parse_frame_detail(frame):
 
 def report_hit(t):
     '''
-    ´¦ÀíMETHOD_ENTRYÊÂ¼ş»Øµ÷º¯Êı£¬
-    tÓĞÁ½¸ö²ÎÊı£¬·Ö±ğ  t[0] thread
+    å¤„ç†METHOD_ENTRYäº‹ä»¶å›è°ƒå‡½æ•°ï¼Œ
+    tæœ‰ä¸¤ä¸ªå‚æ•°ï¼Œåˆ†åˆ«  t[0] thread
                     t[1] Location
     '''
-    t = t[0] #tÊÇÒ»¸öThreadÀàĞÍµÄ±äÁ¿
+    t = t[0] #tæ˜¯ä¸€ä¸ªThreadç±»å‹çš„å˜é‡
     with andbug.screed.section("Breakpoint hit in %s, process suspended." % t):
-        t.sess.suspend() #ÔİÍ£µ±Ç°Ïß³Ì
-        for f in t.frames: #t.framesÊÇ·µ»Øµ±Ç°µÄ¶ÑÕ»ĞÅÏ¢
+        t.sess.suspend() #æš‚åœå½“å‰çº¿ç¨‹
+        for f in t.frames: #t.framesæ˜¯è¿”å›å½“å‰çš„å †æ ˆä¿¡æ¯
             name = str(f.loc)
-            if f.native:  #ÅĞ¶Ï¶ÑÕ»ÖĞº¯ÊıµÄÀàĞÍ£¬ÊÇ·ñÊÇÄÚ²¿º¯Êı¡£Èçdalvik.system.NativeStart.main([Ljava/lang/String;)V <native>
+            if f.native:  #åˆ¤æ–­å †æ ˆä¸­å‡½æ•°çš„ç±»å‹ï¼Œæ˜¯å¦æ˜¯å†…éƒ¨å‡½æ•°ã€‚å¦‚dalvik.system.NativeStart.main([Ljava/lang/String;)V <native>
                 name += ' <native>'
             with andbug.screed.refer(name):
                 parse_frame_detail(f)
@@ -53,15 +53,15 @@ def report_hit(t):
 def cmd_break_methods(ctxt, cpath, mpath):
     for c in ctxt.sess.classes(cpath):
         for m in c.methods(mpath):
-            l = m.firstLoc   #ÕâÀï»áµ÷ÓÃjdwpµÄÃüÁî
-            if l.native:  #µÈÓÚtrue£¬ÎŞ·¨ÉèÖÃ¶Ïµã
+            l = m.firstLoc   #è¿™é‡Œä¼šè°ƒç”¨jdwpçš„å‘½ä»¤
+            if l.native:  #ç­‰äºtrueï¼Œæ— æ³•è®¾ç½®æ–­ç‚¹
                 andbug.screed.item('Could not hook native %s' % l)
                 continue
-            l.hook(func = report_hit) #µ÷ÓÃ¶ÏµãÉèÖÃº¯Êı
+            l.hook(func = report_hit) #è°ƒç”¨æ–­ç‚¹è®¾ç½®å‡½æ•°
             andbug.screed.item('Hooked %s' % l)
 
 def cmd_break_classes(ctxt, cpath):
-    for c in ctxt.sess.classes(cpath): #cÎªvm.pyÖĞ£¬ClassÀàµÄÒ»¸ö¶ÔÏó
+    for c in ctxt.sess.classes(cpath): #cä¸ºvm.pyä¸­ï¼ŒClassç±»çš„ä¸€ä¸ªå¯¹è±¡
         c.hookEntries(func = report_hit)
         andbug.screed.item('Hooked %s' % c)
 
@@ -72,7 +72,7 @@ def cmd_break(ctxt, cpath, mquery=None):
     'suspends the process when a method is called'
     cpath, mname, mjni = andbug.options.parse_mquery(cpath, mquery)
     #print "cpath=" + cpath + "\t mname=" + mname + "\t mjni=" + mjni 
-    #Êä³öµÄ½á¹ûÊÇ£ºcpath=Lcom/example/test/MainActivity$1;     mname=onClick     mjni=(Landroid/view/View;)V
+    #è¾“å‡ºçš„ç»“æœæ˜¯ï¼šcpath=Lcom/example/test/MainActivity$1;     mname=onClick     mjni=(Landroid/view/View;)V
     with andbug.screed.section('Setting Hooks'):
         if mname is None:
             cmd_break_classes(ctxt, cpath)

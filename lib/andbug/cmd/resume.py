@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+ï»¿#!/usr/bin/env python
 # -*- coding: utf-8 -*- 
 
 ## Copyright 2011, IOActive, Inc. All rights reserved.
@@ -22,14 +22,14 @@ import andbug.command, andbug.screed
 @andbug.command.action('[<name>]', shell=True)
 def resume(ctxt, name=None):
     'resumes threads in the process'
-    #Õë¶ÔÕû¸öĞéÄâ»ú
+    #é’ˆå¯¹æ•´ä¸ªè™šæ‹Ÿæœº
     if name is None:
         ctxt.sess.resume()
         return andbug.screed.section('Process Resumed')
     elif name == '*':
         name = None
 
-    #Õë¶Ôµ¥¸öÏß³Ì
+    #é’ˆå¯¹å•ä¸ªçº¿ç¨‹
     with andbug.screed.section('Resuming Threads'):
         for t in ctxt.sess.threads(name):
             t.resume()

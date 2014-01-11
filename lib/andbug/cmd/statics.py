@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+ï»¿#!/usr/bin/env python
 # -*- coding: utf-8 -*- 
 
 ## Copyright 2011, IOActive, Inc. All rights reserved.
@@ -23,7 +23,7 @@ import andbug.command, andbug.options
 def statics(ctxt, cpath):
     'lists the methods of a class'
     cpath = andbug.options.parse_cpath(cpath)
-    for c in ctxt.sess.classes(cpath):  #cµÄÀàĞÍÎªvm.ClassÀà£¬ËüµÄ¸¸ÀàĞÍÎªRefType
+    for c in ctxt.sess.classes(cpath):  #cçš„ç±»å‹ä¸ºvm.Classç±»ï¼Œå®ƒçš„çˆ¶ç±»å‹ä¸ºRefType
         andbug.screed.section("Static Fields, %s" % c)
         for k, v in c.statics.iteritems():
-            andbug.screed.item("%s = %s" % (k, v)) #ÔÚÕâÀï»áµ½ÓÃvm.StringÀàÖĞµÄ__str__º¯Êı£¬½ø¶øµ÷ÓÃdata(self)·¢Æğ"call jdwp 0x0A 01"ÃüÁî
+            andbug.screed.item("%s = %s" % (k, v)) #åœ¨è¿™é‡Œä¼šåˆ°ç”¨vm.Stringç±»ä¸­çš„__str__å‡½æ•°ï¼Œè¿›è€Œè°ƒç”¨data(self)å‘èµ·"call jdwp 0x0A 01"å‘½ä»¤

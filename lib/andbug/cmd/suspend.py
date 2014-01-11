@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+ï»¿#!/usr/bin/env python
 # -*- coding: utf-8 -*- 
 
 ## Copyright 2011, IOActive, Inc. All rights reserved.
@@ -20,17 +20,17 @@
 import andbug.command, andbug.screed
 
 @andbug.command.action('[<name>]', shell=True)
-def suspend(ctxt, name=None): #ctxt ÊÇContextÀà
+def suspend(ctxt, name=None): #ctxt æ˜¯Contextç±»
     'suspends threads in the process'
-    #Ã»ÓĞÖ¸¶¨Ïß³ÌÃû³Æ£¬Ôò½«ĞéÄâ»úÖĞËùÓĞ½ø³Ì¹ÒÆğ
+    #æ²¡æœ‰æŒ‡å®šçº¿ç¨‹åç§°ï¼Œåˆ™å°†è™šæ‹Ÿæœºä¸­æ‰€æœ‰è¿›ç¨‹æŒ‚èµ·
     if name is None:
         ctxt.sess.suspend() 
         return andbug.screed.section('Process Suspended')
     elif name == '*':
         name = None
     
-    #Ö¸¶¨ÁËÏß³ÌµÄÃû³Æ£¬Ôò¹ÒÆğÏàÓ¦µÄÏß³Ì
+    #æŒ‡å®šäº†çº¿ç¨‹çš„åç§°ï¼Œåˆ™æŒ‚èµ·ç›¸åº”çš„çº¿ç¨‹
     with andbug.screed.section('Suspending Threads'):
-        for t in ctxt.sess.threads(name): #tÊÇÒ»¸öThreadÀàĞÍµÄ¶ÔÏó
-            t.suspend()   #½«¶ÔÓ¦µÄÏß³ÌÔİÍ£
+        for t in ctxt.sess.threads(name): #tæ˜¯ä¸€ä¸ªThreadç±»å‹çš„å¯¹è±¡
+            t.suspend()   #å°†å¯¹åº”çš„çº¿ç¨‹æš‚åœ
             andbug.screed.item('suspended %s' % t)

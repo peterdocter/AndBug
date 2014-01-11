@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+ï»¿#!/usr/bin/env python
 # -*- coding: utf-8 -*- 
 
 ## Copyright 2011, IOActive, Inc. All rights reserved.
@@ -22,21 +22,21 @@ import types
 
 @andbug.command.action('[<partial class name>]')
 def classes(ctxt, expr=None):
-    'lists loaded classes. if no partial class name supplied, list all classes.Õ¹Ê¾Ò»¸öÀàµÄÏêÇé'
+    'lists loaded classes. if no partial class name supplied, list all classes.å±•ç¤ºä¸€ä¸ªç±»çš„è¯¦æƒ…'
     with andbug.screed.section('Loaded Classes'):
         
         #classesInfor = ctxt.sess.classes() 
-        #print type(classesInfor) classesInfor µÄÀàĞÍÊÇ<class 'andbug.data.view'>
-        for c in ctxt.sess.classes(): #ctxt.sess.classes()º¯ÊıÀ´»ñÈ¡ÀàµÄĞÅÏ¢
-            #print type(c) ·µ»ØµÄÀàĞÍÊÇ<class 'andbug.vm.Class'>            
-            n = c.jni  #»ñÈ¡ÀàÖĞµÄjni³ÉÔ±±äÁ¿
+        #print type(classesInfor) classesInfor çš„ç±»å‹æ˜¯<class 'andbug.data.view'>
+        for c in ctxt.sess.classes(): #ctxt.sess.classes()å‡½æ•°æ¥è·å–ç±»çš„ä¿¡æ¯
+            #print type(c) è¿”å›çš„ç±»å‹æ˜¯<class 'andbug.vm.Class'>            
+            n = c.jni  #è·å–ç±»ä¸­çš„jniæˆå‘˜å˜é‡
             if n.startswith('L') and n.endswith(';'):
                 n = n[1:-1].replace('/', '.')
             else:
                 continue
 
             if expr is not None:
-                #Í¨¹ıÕıÔòÅĞ¶ÏÒªÊä³öµÄÀàĞÅÏ¢
+                #é€šè¿‡æ­£åˆ™åˆ¤æ–­è¦è¾“å‡ºçš„ç±»ä¿¡æ¯
                 if n.find(expr) >= 0:
                     andbug.screed.item(n)
             else:

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+ï»¿#!/usr/bin/env python
 # -*- coding: utf-8 -*- 
 
 ## Copyright 2011, IOActive, Inc. All rights reserved.
@@ -26,10 +26,10 @@ def class_detail(ctxt, class_name=None):
     with andbug.screed.section('Loaded Class-detail'):
         
         #classesInfor = ctxt.sess.classes() 
-        #print type(classesInfor) classesInfor µÄÀàĞÍÊÇ<class 'andbug.data.view'>
-        for c in ctxt.sess.classes(): #ctxt.sess.classes()º¯ÊıÀ´»ñÈ¡ÀàµÄĞÅÏ¢
-            #print type(c) ·µ»ØµÄÀàĞÍÊÇ<class 'andbug.vm.Class'>            
-            n = c.jni  #»ñÈ¡ÀàÖĞµÄjni³ÉÔ±±äÁ¿
+        #print type(classesInfor) classesInfor çš„ç±»å‹æ˜¯<class 'andbug.data.view'>
+        for c in ctxt.sess.classes(): #ctxt.sess.classes()å‡½æ•°æ¥è·å–ç±»çš„ä¿¡æ¯
+            #print type(c) è¿”å›çš„ç±»å‹æ˜¯<class 'andbug.vm.Class'>            
+            n = c.jni  #è·å–ç±»ä¸­çš„jniæˆå‘˜å˜é‡
             if n.startswith('L') and n.endswith(';'):
                 n = n[1:-1].replace('/', '.')
             else:
@@ -46,7 +46,7 @@ def class_detail(ctxt, class_name=None):
 
 def show_method_infor(class_infor):
     '''
-    Õ¹Ê¾Ö¸¶¨ÀàÖĞ·½·¨µÄĞÅÏ¢
+    å±•ç¤ºæŒ‡å®šç±»ä¸­æ–¹æ³•çš„ä¿¡æ¯
     '''
     andbug.screed.section('Methods Infor:')
     for m in class_infor.methods():
@@ -54,15 +54,15 @@ def show_method_infor(class_infor):
 
 def show_static_infor(class_infor):
     '''
-    Õ¹Ê¾ÀàÖĞ¾²Ì¬±äÁ¿µÄĞÅÏ¢
+    å±•ç¤ºç±»ä¸­é™æ€å˜é‡çš„ä¿¡æ¯
     '''
     andbug.screed.section('Statics Infor:')
     for k, v in class_infor.statics.iteritems():
-        andbug.screed.item("%s = %s" % (k, v)) #ÔÚÕâÀï»áµ½ÓÃvm.StringÀàÖĞµÄ__str__º¯Êı£¬½ø¶øµ÷ÓÃdata(self)·¢Æğ"call jdwp 0x0A 01"ÃüÁî
+        andbug.screed.item("%s = %s" % (k, v)) #åœ¨è¿™é‡Œä¼šåˆ°ç”¨vm.Stringç±»ä¸­çš„__str__å‡½æ•°ï¼Œè¿›è€Œè°ƒç”¨data(self)å‘èµ·"call jdwp 0x0A 01"å‘½ä»¤
 
 def show_field_infor(classinfor):         
     '''
-    Õ¹Ê¾ÀàÖĞ³ÉÔ±±äÁ¿µÄĞÅÏ¢
+    å±•ç¤ºç±»ä¸­æˆå‘˜å˜é‡çš„ä¿¡æ¯
     '''
     andbug.screed.section('Fields Infor:')
     for field in classinfor.fieldList:

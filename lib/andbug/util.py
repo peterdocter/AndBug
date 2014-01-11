@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+ï»¿#!/usr/bin/env python
 # -*- coding: utf-8 -*- 
 
 ## Copyright 2011, IOActive, Inc. All rights reserved.
@@ -46,7 +46,7 @@ def printout( prefix, data ):
     if not data: return ''
     print prefix + data.replace( '\n', '\n' + prefix )
 
-#´´½¨Ò»¸ö½ø³Ì£¬È¥Ö´ĞĞÒ»¸öÖ¸¶¨µÄcommand
+#åˆ›å»ºä¸€ä¸ªè¿›ç¨‹ï¼Œå»æ‰§è¡Œä¸€ä¸ªæŒ‡å®šçš„command
 def sh( command, no_echo=True, no_fail=False, no_wait=False ):
     if not no_echo: 
         printout( '>>> ', repr( command ) )
@@ -63,7 +63,7 @@ def sh( command, no_echo=True, no_fail=False, no_wait=False ):
 
     output, _ = process.communicate( )
     status = process.returncode
-    print "status=" + str(status)
+    #print "status=" + str(status)
     if status: 
         if not no_echo: printout( '!!! ', output )
         if not no_fail: raise ShellException( command, output, status )
@@ -74,7 +74,7 @@ def sh( command, no_echo=True, no_fail=False, no_wait=False ):
 
 def ShellIO( command):
     '''
-    ÁÙÊ±Ôö¼ÓÒÔ±ã½â¾ö¶à´ÎÊäÈëµÄÎÊÌâ
+    ä¸´æ—¶å¢åŠ ä»¥ä¾¿è§£å†³å¤šæ¬¡è¾“å…¥çš„é—®é¢˜
     '''
     print "begin"
     process = subprocess.Popen( 
@@ -121,18 +121,18 @@ def adb(*args):
     except OSError as err:
         raise ConfigError('could not find "adb" from the Android SDK in your PATH')
 
-#º¯ÊıÓÃÓÚ»ñµÃÉè±¸ĞÅÏ¢£¬Ê¹ÓÃÃüÁî"adb devices"À´»ñµÃ
+#å‡½æ•°ç”¨äºè·å¾—è®¾å¤‡ä¿¡æ¯ï¼Œä½¿ç”¨å‘½ä»¤"adb devices"æ¥è·å¾—
 def find_dev(dev=None):
     'determines the device for the command based on dev'
     if dev:
-		#µ±dev²»Îª¿ÕÊ±£¬¼ìÑédevÖĞÊÇ·ñÊÇdevicesÖµ
+		#å½“devä¸ä¸ºç©ºæ—¶ï¼Œæ£€éªŒdevä¸­æ˜¯å¦æ˜¯deviceså€¼
         if dev not in map( 
             lambda x: x.split()[0], 
             adb('devices').splitlines()[1:-1]
         ):
             raise OptionError('device serial number not online')
     else:
-		#µ±devÎª¿ÕÊ±£¬»ñÈ¡devicesµÄÖµºó±£´æµ½devÖĞ
+		#å½“devä¸ºç©ºæ—¶ï¼Œè·å–devicesçš„å€¼åä¿å­˜åˆ°devä¸­
         lines = adb('devices').splitlines()
         if len(lines) != 3:
             raise OptionError(
@@ -143,10 +143,10 @@ def find_dev(dev=None):
         
     return dev
 
-#»ñµÃ½ø³ÌidµÄÖµ£¬Ö´ĞĞ¡°adb shell ps¡± ÃüÁî
+#è·å¾—è¿›ç¨‹idçš„å€¼ï¼Œæ‰§è¡Œâ€œadb shell psâ€ å‘½ä»¤
 def find_pid(pid, dev=None):
     '''determines the process id for the command based on dev, pid and/or name
-    ·µ»ØÖµ£ºÈç¹ûÔÚĞéÄâ»úÖĞÕÒµ½·µ»ØpidµÄÖµ£¬Èç¹ûÃ»ÓĞÕÒµ½·µ»ØNone
+    è¿”å›å€¼ï¼šå¦‚æœåœ¨è™šæ‹Ÿæœºä¸­æ‰¾åˆ°è¿”å›pidçš„å€¼ï¼Œå¦‚æœæ²¡æœ‰æ‰¾åˆ°è¿”å›None
     '''
 
     ps = ('-s', dev, 'shell', 'ps') if dev else ('shell', 'ps') 

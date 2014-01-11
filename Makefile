@@ -1,4 +1,4 @@
-# defense against platforms where python == python3 
+﻿# defense against platforms where python == python3 
 
 PYTHON ?= python
 PYREXC ?= pyrexc 

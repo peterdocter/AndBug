@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+ï»¿#!/usr/bin/env python
 # -*- coding: utf-8 -*- 
 
 ## Copyright 2011, Felipe Barriga Richards <spam@felipebarriga.cl>.
@@ -26,7 +26,7 @@ def find_object(ctxt, oid):
             for k, v in f.values.items():
                 print "In inspect.find_object k=" + str(k) + "\t v=" + str(v)
                 if type(v) is andbug.vm.Object and v.oid == oid:
-                    return (v, t)   #v£º±äÁ¿µÄÖµ£¬ t£ºËùÔÚµÄÏß³ÌĞÅÏ¢
+                    return (v, t)   #vï¼šå˜é‡çš„å€¼ï¼Œ tï¼šæ‰€åœ¨çš„çº¿ç¨‹ä¿¡æ¯
     return None
 
 @andbug.command.action('<object-id>')

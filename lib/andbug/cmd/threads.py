@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+ï»¿#!/usr/bin/env python
 # -*- coding: utf-8 -*- 
 
 ## Copyright 2011, IOActive, Inc. All rights reserved.
@@ -47,16 +47,16 @@ def threads(ctxt, arg1 = None, arg2 = None):
         if param is None or param[:8] != 'verbose=':
             return False
 
-        verbosity = int(param[8:]) #»ñÈ¡'verbose='ºóÃæµÄÖµ
+        verbosity = int(param[8:]) #è·å–'verbose='åé¢çš„å€¼
         return verbosity
 
     def parse_args(arg1, arg2): 
         '''
-        º¯Êı¹¦ÄÜ£º¶Ô²ÎÊı½øĞĞ½âÎö£¬
-        ×¢£º Èç¹ûarg1Îªname£¬arg2Îªverbose£¬Ôò·µ»Ø(name, verbose)
-            Èç¹ûarg1Îªname£¬arg2ÎªNone£¬Ôò·µ»Ø(name, 0)
-            Èç¹ûarg1Îªverbose£¬arg2ÎªNone£¬Ôò·µ»Ø(None, verbose)
-            Èç¹ûarg1ÎªNone£¬arg2ÎªNone£¬Ôò·µ»Ø(None, 0)
+        å‡½æ•°åŠŸèƒ½ï¼šå¯¹å‚æ•°è¿›è¡Œè§£æï¼Œ
+        æ³¨ï¼š å¦‚æœarg1ä¸ºnameï¼Œarg2ä¸ºverboseï¼Œåˆ™è¿”å›(name, verbose)
+            å¦‚æœarg1ä¸ºnameï¼Œarg2ä¸ºNoneï¼Œåˆ™è¿”å›(name, 0)
+            å¦‚æœarg1ä¸ºverboseï¼Œarg2ä¸ºNoneï¼Œåˆ™è¿”å›(None, verbose)
+            å¦‚æœarg1ä¸ºNoneï¼Œarg2ä¸ºNoneï¼Œåˆ™è¿”å›(None, 0)
         '''
         if arg1 is None:
             return (None, 0)
@@ -77,12 +77,12 @@ def threads(ctxt, arg1 = None, arg2 = None):
     ctxt.sess.suspend()
 
     try:
-        threads = sorted(ctxt.sess.threads(name).items, key=threadId)  #¶ÔÏß³ÌÊı¾İ°´ÕÕÏß³ÌIdµÄÖµ½øĞĞÅÅĞò
+        threads = sorted(ctxt.sess.threads(name).items, key=threadId)  #å¯¹çº¿ç¨‹æ•°æ®æŒ‰ç…§çº¿ç¨‹Idçš„å€¼è¿›è¡Œæ’åº
 
-        for t in threads: #Öğ¸öÈ¡³öÏß³Ì
+        for t in threads: #é€ä¸ªå–å‡ºçº¿ç¨‹
             with andbug.screed.section(str(t)):
                 if verbose > 0:
-                    thread_methods(t, verbose)  #ÓÃÒÔÕ¹Ê¾¸÷Ïß³Ìµ±Ç°µÄ¶ÑÕ»ĞÅÏ¢
+                    thread_methods(t, verbose)  #ç”¨ä»¥å±•ç¤ºå„çº¿ç¨‹å½“å‰çš„å †æ ˆä¿¡æ¯
     finally:
         ctxt.sess.resume()
         

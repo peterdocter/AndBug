@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+ï»¿#!/usr/bin/env python
 # -*- coding: utf-8 -*- 
 
 ## Copyright 2011, IOActive, Inc. All rights reserved.
@@ -16,11 +16,11 @@
 ## along with AndBug.  If not, see <http://www.gnu.org/licenses/>.
    
    
-#ÎÄ¼ş¹¦ÄÜ£ºÊµÏÖÈÕÖ¾¼ÇÂ¼µÄÒ»Ğ©Àà¹¦ÄÜ£º
-#¶ÔÍâÌá¹©Ò»ÏÂº¯Êı½Ó¿Ú£º
-#def error(tag, meta, data = None)      Êä³ö´íÎóĞÅÏ¢
-#def info(tag, meta, data = None)		Êä³öÆÕÍ¨ĞÅÏ¢
-#def read_log(path=None, file=None)		¶ÁÈ¡ÈÕÖ¾ĞÅÏ¢
+#æ–‡ä»¶åŠŸèƒ½ï¼šå®ç°æ—¥å¿—è®°å½•çš„ä¸€äº›ç±»åŠŸèƒ½ï¼š
+#å¯¹å¤–æä¾›ä¸€ä¸‹å‡½æ•°æ¥å£ï¼š
+#def error(tag, meta, data = None)      è¾“å‡ºé”™è¯¯ä¿¡æ¯
+#def info(tag, meta, data = None)		è¾“å‡ºæ™®é€šä¿¡æ¯
+#def read_log(path=None, file=None)		è¯»å–æ—¥å¿—ä¿¡æ¯
 
    
 import os, sys, time
@@ -30,12 +30,12 @@ def blocks(seq, sz):
     ofs = 0
     lim = len(seq)
     while ofs < lim:
-        yield seq[ofs:ofs+sz]  #¹Ø¼üÊÇyieldµÄÓÃ·¨£¬ÏÖÔÚÀí½âµÄ»¹²»ÊÇºÜÉîÈë
+        yield seq[ofs:ofs+sz]  #å…³é”®æ˜¯yieldçš„ç”¨æ³•ï¼Œç°åœ¨ç†è§£çš„è¿˜ä¸æ˜¯å¾ˆæ·±å…¥
         ofs += sz
 		
-#º¯Êı¹¦ÄÜ£º
-#×¢ÊÍ£ºcensor Éó²é£¬¼ì²é
-#½«´«ÈëµÄ×Ö·û±à³Ì¿É´òÓ¡×Ö·û£¬¶ÔÓÚ´«ÈëµÄ²»¿É´òÓ¡×Ö·û£¬ÓÃ¡°.¡±±íÊ¾
+#å‡½æ•°åŠŸèƒ½ï¼š
+#æ³¨é‡Šï¼šcensor å®¡æŸ¥ï¼Œæ£€æŸ¥
+#å°†ä¼ å…¥çš„å­—ç¬¦ç¼–ç¨‹å¯æ‰“å°å­—ç¬¦ï¼Œå¯¹äºä¼ å…¥çš„ä¸å¯æ‰“å°å­—ç¬¦ï¼Œç”¨â€œ.â€è¡¨ç¤º
 def censor(seq):
     for ch in seq:
         if ch < '!': 
@@ -46,17 +46,17 @@ def censor(seq):
             yield ch
 
 
-#º¯Êı¹¦ÄÜ£ºÒÔÊ®ÁùÖÆĞÎÊ½Êä³öÊı¾İ¡¾²Â²â¡¿
+#å‡½æ•°åŠŸèƒ½ï¼šä»¥åå…­åˆ¶å½¢å¼è¾“å‡ºæ•°æ®ã€çŒœæµ‹ã€‘
 def format_hex(data, indent="", width=16, out=None):
     if out == None:
-        out = StringIO()  #StringIO¾­³£±»ÓÃÀ´×÷Îª×Ö·û´®µÄ»º´æ£¬Ó¦ÎªStringIOÓĞ¸öºÃ´¦£¬ËûµÄÓĞĞ©½Ó¿ÚºÍÎÄ¼ş²Ù×÷ÊÇÒ»ÖÂµÄ£¬Ò²¾ÍÊÇËµÓÃÍ¬ÑùµÄ´úÂë£¬¿ÉÒÔÍ¬Ê±µ±³ÉÎÄ¼ş²Ù×÷»òÕßStringIO²Ù×÷
+        out = StringIO()  #StringIOç»å¸¸è¢«ç”¨æ¥ä½œä¸ºå­—ç¬¦ä¸²çš„ç¼“å­˜ï¼Œåº”ä¸ºStringIOæœ‰ä¸ªå¥½å¤„ï¼Œä»–çš„æœ‰äº›æ¥å£å’Œæ–‡ä»¶æ“ä½œæ˜¯ä¸€è‡´çš„ï¼Œä¹Ÿå°±æ˜¯è¯´ç”¨åŒæ ·çš„ä»£ç ï¼Œå¯ä»¥åŒæ—¶å½“æˆæ–‡ä»¶æ“ä½œæˆ–è€…StringIOæ“ä½œ
         strout = True
     else:
         strout = False
 
     indent += "%08x:  "
     ofs = 0
-    for block in blocks(data, width): #½«Ò»¸ö×Ö·û´®°´ÕÕÖ¸¶¨µÄ³¤¶È·Ö³É¶à¸ö×Ö·û´®¶Î
+    for block in blocks(data, width): #å°†ä¸€ä¸ªå­—ç¬¦ä¸²æŒ‰ç…§æŒ‡å®šçš„é•¿åº¦åˆ†æˆå¤šä¸ªå­—ç¬¦ä¸²æ®µ
         out.write(indent % ofs)
         out.write(' '.join(map(lambda x: x.encode('hex'), block)))
         if len(block) < width:
@@ -77,7 +77,7 @@ def parse_hex(dump, out=None):
         strout = False
 
     for row in dump.splitlines():
-        row = row.strip().split('  ')  #stripº¯ÊıÓÃÓÚÈ¥µô×Ö·û´®ÖĞ¿ªÊ¼ºÍ½áÊøµÄ×Ö·û
+        row = row.strip().split('  ')  #stripå‡½æ•°ç”¨äºå»æ‰å­—ç¬¦ä¸²ä¸­å¼€å§‹å’Œç»“æŸçš„å­—ç¬¦
         block = row[1].strip().split(' ')
         block = ''.join(map(lambda x: chr(int(x, 16)), block))
         out.write(block)
@@ -113,7 +113,7 @@ class LogReader(object):
     
     def readLine(self):
         if self.last is None:
-            line = self.file.readline().rstrip()  #rstrip()ÓÃÀ´ÔÚ×Ö·û´®Ä©Î²É¾³ıÄ³¸ö×Ö·û
+            line = self.file.readline().rstrip()  #rstrip()ç”¨æ¥åœ¨å­—ç¬¦ä¸²æœ«å°¾åˆ é™¤æŸä¸ªå­—ç¬¦
         else:
             line = self.last
             self.last = None

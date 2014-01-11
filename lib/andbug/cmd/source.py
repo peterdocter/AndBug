@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+﻿#!/usr/bin/env python
 # -*- coding: utf-8 -*- 
 
 ## Copyright 2011, IOActive, Inc. All rights reserved.
@@ -17,7 +17,8 @@
 
 'implementation of the "methods" command'
 
-import andbug.source, os.path
+import os.path
+import andbug.source, andbug.screed
 
 @andbug.command.action('<src-dir>')
 def source(ctxt, srcdir):
@@ -26,6 +27,7 @@ def source(ctxt, srcdir):
     if os.path.isdir(srcdir):
         if os.path.isdir(os.path.join(srcdir, "smali")):
             srcdir = os.path.join(srcdir, "smali")
+        andbug.screed.section('Add source folder: %s' % srcdir)
         andbug.source.add_srcdir(srcdir)
     else:
         print '!! directory not found:', repr(srcdir)

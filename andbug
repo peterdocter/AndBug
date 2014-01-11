@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+﻿#!/usr/bin/env python
 # -*- coding: utf-8 -*- 
 ## Copyright 2011, IOActive, Inc. All rights reserved.
 ##
@@ -16,7 +16,8 @@
 
 'this script executes command modules found in andbug.commands'
 import os, os.path, sys, traceback, atexit
-sys.path.append("/home/anbc/work_folder/andbug_work/andbug/lib") 
+sys.path.append("/home/anbc/test/AndBug/lib")
+#sys.path.append("/home/anbc/work_folder/andbug_work/andbug/lib") 
 def panic(why, exit=True, exc=False):
     sys.stderr.write("!! %s\n" % (why,))
     sys.stderr.flush()

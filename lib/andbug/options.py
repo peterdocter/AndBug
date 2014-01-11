@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+ï»¿#!/usr/bin/env python
 # -*- coding: utf-8 -*- 
 
 ## Copyright 2011, IOActive, Inc. All rights reserved.
@@ -27,7 +27,7 @@ class ParseError(Exception):
 
 def parse_cpath(path):
     '''
-    º¯Êı¹¦ÄÜ£º¶ÔÀàÂ·¾¶½øĞĞ½âÎö
+    å‡½æ•°åŠŸèƒ½ï¼šå¯¹ç±»è·¯å¾„è¿›è¡Œè§£æ
     '''
     if path.startswith('L') and path.endswith(';') and ('.' not in path):
 		return path

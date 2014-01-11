@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+ï»¿#!/usr/bin/env python
 # -*- coding: utf-8 -*- 
 
 ## Copyright 2011, IOActive, Inc. All rights reserved.
@@ -57,21 +57,21 @@ class Context(object):
         self.sess = None
         self.pid = None
         self.dev = None
-        self.shell = False  #±êÊ¶ÏÖÔÚÊÇ·ñ¿ÉÒÔÔÚandbugÏÂÔËĞĞshell
+        self.shell = False  #æ ‡è¯†ç°åœ¨æ˜¯å¦å¯ä»¥åœ¨andbugä¸‹è¿è¡Œshell
     
     def connect(self):
         'connects using vm.connect to the process if not already connected'
         if self.sess is not None: return
         self.sess = andbug.vm.connect(self.pid, self.dev)
 
-    #¶Ô´«ÈëÌØ¶¨ÃüÁîµÄ²ÎÊı½øĞĞ½âÎö
+    #å¯¹ä¼ å…¥ç‰¹å®šå‘½ä»¤çš„å‚æ•°è¿›è¡Œè§£æ
     def parseOpts(self, args, options=OPTIONS, proc=True):
         'parse command options in OPTIONS format'
         short_opts = ''.join(opt[0][0] + ':' for opt in options)  #str: p:d:s:
         long_opts = list(opt[0] + '=' for opt in options)  #list: ['pid=', 'dev=', 'src=']
         opt_table = {}
 
-		#opt_tableµÄÖµÎª£º
+		#opt_tableçš„å€¼ä¸ºï¼š
 		#	--dev    str: dev
 		#	--pid	str: pid
 		#	--src	str: src
@@ -82,23 +82,23 @@ class Context(object):
             opt_table['-' + opt[0][0]] = opt[0]
             opt_table['--' + opt[0]] = opt[0]
 
-		#·Ö½â²ÎÊıopts±£´æ ²ÎÊıÃû²ÎÊıÖµµÄ¶Ô£¬  args±£´æÊ£ÓàµÄ²ÎÊıÖ®
-		#"xxx.py -h -o file --help --output=out file1 file2" ÃüÁî½âÎöºó
-		#optsµÄÖµ [('-h',''),('-o','file'),('--help',''),('--output','out')]
-		#argsµÄÖµ ['file1','file2']
+		#åˆ†è§£å‚æ•°optsä¿å­˜ å‚æ•°åå‚æ•°å€¼çš„å¯¹ï¼Œ  argsä¿å­˜å‰©ä½™çš„å‚æ•°ä¹‹
+		#"xxx.py -h -o file --help --output=out file1 file2" å‘½ä»¤è§£æå
+		#optsçš„å€¼ [('-h',''),('-o','file'),('--help',''),('--output','out')]
+		#argsçš„å€¼ ['file1','file2']
         opts, args = getopt.gnu_getopt(args, short_opts, long_opts)
 
-        opts = list((opt_table[k], v) for k, v in opts) #¶ÌÃüÁî»ò³¤ÃüÁî±ä³ÉÃüÁîÈ«³Æ
+        opts = list((opt_table[k], v) for k, v in opts) #çŸ­å‘½ä»¤æˆ–é•¿å‘½ä»¤å˜æˆå‘½ä»¤å…¨ç§°
         t = {}
         for k, v in opts: 
-            if k == 'src': #´¦ÀísrcÃüÁî£¬²Â²âÊÇÔ´´úÂëÃüÁî
+            if k == 'src': #å¤„ç†srcå‘½ä»¤ï¼ŒçŒœæµ‹æ˜¯æºä»£ç å‘½ä»¤
                 andbug.source.add_srcdir(v)
             else:
                 t[k] = v
         
         if proc:
-            pid = t.get('pid')  #»ñÈ¡µ±Ç°Òªµ÷ÊÔ³ÌĞòµÄpidµÄÖµ
-            dev = t.get('dev')	#»ñÈ¡µ±Ç°Òªµ÷ÊÔ³ÌĞòµÄdevµÄÖµ
+            pid = t.get('pid')  #è·å–å½“å‰è¦è°ƒè¯•ç¨‹åºçš„pidçš„å€¼
+            dev = t.get('dev')	#è·å–å½“å‰è¦è°ƒè¯•ç¨‹åºçš„devçš„å€¼
         
             self.findDev(dev)
             self.findPid(pid)
@@ -107,19 +107,19 @@ class Context(object):
 
     def findDev(self, dev=None):
         'determines the device for the command based on dev'
-        if self.dev is not None: return  #Èç¹ûContext¶ÔÏóÖĞdevÒÑ¾­ÓĞÓĞĞ§µÄÖµÁË£¬¾Í²»È¥ÒªÔÙµ÷ÓÃ»ñÈ¡devµÄº¯Êıandbug.util.find_dev
+        if self.dev is not None: return  #å¦‚æœContextå¯¹è±¡ä¸­devå·²ç»æœ‰æœ‰æ•ˆçš„å€¼äº†ï¼Œå°±ä¸å»è¦å†è°ƒç”¨è·å–devçš„å‡½æ•°andbug.util.find_dev
         self.dev = andbug.util.find_dev(dev)
 
     def findPid(self, pid=None):
         'determines the process id for the command based on dev, pid and/or name'        
-        if self.pid is not None: return  ##Èç¹ûContext¶ÔÏóÖĞpidÒÑ¾­ÓĞÓĞĞ§µÄÖµÁË£¬¾Í²»È¥ÒªÔÙµ÷ÓÃ»ñÈ¡pidµÄº¯Êıandbug.util.find_pid
+        if self.pid is not None: return  ##å¦‚æœContextå¯¹è±¡ä¸­pidå·²ç»æœ‰æœ‰æ•ˆçš„å€¼äº†ï¼Œå°±ä¸å»è¦å†è°ƒç”¨è·å–pidçš„å‡½æ•°andbug.util.find_pid
         cur_pid = andbug.util.find_pid(pid, self.dev)
         count =0
         while cur_pid == None:
             if count%4==0:
                 andbug.screed.item("wait......")
                 
-            sleep(1) #sleep 1ÃëÖĞºóÔÙÖØĞÂ»ñÈ¡pidµÄÖµ
+            sleep(1) #sleep 1ç§’ä¸­åå†é‡æ–°è·å–pidçš„å€¼
             count=count+1
             cur_pid = andbug.util.find_pid(pid, self.dev)
 
@@ -129,13 +129,13 @@ class Context(object):
         self.pid = cur_pid
         
         
-    #ÅĞ¶ÏÃüÁîÊÇ·ñ¿ÉÒÔÖ´ĞĞ£¿×÷ÓÃÊÇÈç¹û¸ÃÃüÁîµÄshellÊôĞÔÎªtrue£¬ÄÇÃ´Õâ¸öÃüÁî¾Í¿ÉÒÔÖ±½Ó¸úÔÚandbugºó
-    #×÷ÎªÒ»¸öÃüÁîÖ±½ÓÔËĞĞ
+    #åˆ¤æ–­å‘½ä»¤æ˜¯å¦å¯ä»¥æ‰§è¡Œï¼Ÿä½œç”¨æ˜¯å¦‚æœè¯¥å‘½ä»¤çš„shellå±æ€§ä¸ºtrueï¼Œé‚£ä¹ˆè¿™ä¸ªå‘½ä»¤å°±å¯ä»¥ç›´æ¥è·Ÿåœ¨andbugå
+    #ä½œä¸ºä¸€ä¸ªå‘½ä»¤ç›´æ¥è¿è¡Œ
     def can_perform(self, act):
         'uses the act.shell property to determine if it makes sense'
         if self.shell:
-            return act.shell != False  #Öµ²»µÈÓÚtrue·µ»Øfalse
-        return act.shell != True  #Öµ²»µÈÓÚfalse£¬·µ»Øtrue
+            return act.shell != False  #å€¼ä¸ç­‰äºtrueè¿”å›false
+        return act.shell != True  #å€¼ä¸ç­‰äºfalseï¼Œè¿”å›true
 
     def block_exit(self):
         'prevents termination outside of shells'
@@ -152,32 +152,32 @@ class Context(object):
             sleep(3600)
         
 
-    #º¯Êı¹¦ÄÜ£ºÖ´ĞĞ¾ßÌåÃüÁî
-    #²ÎÊı£º	cmd ¾ßÌåÒªÖ´ĞĞµÄÃüÁî
-    #		args ÃüÁîµÄ²ÎÊı
+    #å‡½æ•°åŠŸèƒ½ï¼šæ‰§è¡Œå…·ä½“å‘½ä»¤
+    #å‚æ•°ï¼š	cmd å…·ä½“è¦æ‰§è¡Œçš„å‘½ä»¤
+    #		args å‘½ä»¤çš„å‚æ•°
     def perform(self, cmd, args):
         'performs the named command with the supplied arguments'
-        act = ACTION_MAP.get(cmd) #»ñÈ¡¶ÔÓ¦ÃüÁîµÄ´¦Àíº¯Êı
+        act = ACTION_MAP.get(cmd) #è·å–å¯¹åº”å‘½ä»¤çš„å¤„ç†å‡½æ•°
 
         if not act:
             perr('!! command not supported: "%s."' % cmd)
             return False
 
-        if not self.can_perform(act): #º¯Êı·µ»ØfalseÍË³ö
+        if not self.can_perform(act): #å‡½æ•°è¿”å›falseé€€å‡º
             if self.shell:
                 perr('!! %s is not available in the shell.' % cmd)
             else:
                 perr('!! %s is only available in the shell.' % cmd)
             return False
 
-        #¾ßÌå½âÎö£¬µ±Ç°ÃüÁîµÄ²ÎÊı
+        #å…·ä½“è§£æï¼Œå½“å‰å‘½ä»¤çš„å‚æ•°
         args, opts = self.parseOpts(args, act.opts, act.proc)
         argct = len(args) + 1 
 
-        if argct < act.min_arity:  #Èç¹ûĞ¡ÓÚ×îĞ¡µÄ²ÎÊı¸öÊı£¬ÍË³ö
+        if argct < act.min_arity:  #å¦‚æœå°äºæœ€å°çš„å‚æ•°ä¸ªæ•°ï¼Œé€€å‡º
             perr('!! command "%s" requires more arguments.' % cmd)
             return False
-        elif argct > act.max_arity:#Èç¹û´óÓÚ×î´óµÄ²ÎÊı¸öÊı£¬ÍË³ö
+        elif argct > act.max_arity:#å¦‚æœå¤§äºæœ€å¤§çš„å‚æ•°ä¸ªæ•°ï¼Œé€€å‡º
             perr('!! too many arguments for command "%s."' % cmd)
             return False
 
@@ -207,7 +207,7 @@ def dump_exc(exc):
 ACTION_LIST = []
 ACTION_MAP = {}
 
-#¾ßÌåÊµÏÖ½«ÃüÁîĞÅÏ¢±£´æµ½List¡¢MapÖĞ
+#å…·ä½“å®ç°å°†å‘½ä»¤ä¿¡æ¯ä¿å­˜åˆ°Listã€Mapä¸­
 def bind_action(name, fn, aliases):
     ACTION_LIST.append(fn)
     ACTION_MAP[name] = fn
@@ -219,24 +219,24 @@ def action(usage, opts = (), proc = True, shell = None, name = None, aliases=())
     def bind(fn):
         fn.proc = proc
         fn.shell = shell
-        fn.usage = usage   #Ê¹ÓÃ·½·¨
-        fn.opts = OPTIONS[:] + opts   #µ±Ç°ÃüÁîµÄ²ÎÊıÓĞÄÄĞ©
-        fn.keys = list(opt[0] for opt in opts) #±£´æµÄ¶ÌÃüÁîµÄÖµ
-        fn.aliases = aliases    #µ±Ç°ÃüÁîµÄ±ğÃû
-        spec = inspect.getargspec(fn)   #¹¦ÄÜÊÇ»ñÈ¡º¯ÊıfnËù¶¨ÒåµÄ²ÎÊıÃû³Æ£¬¶Ôfn½øĞĞ½âÎö£¬¼ÆËã³ö²ÎÊıµÄ¸öÊı£¬ºÍÓĞÄ¬ÈÏÖµ²ÎÊıµÄ¸öÊı£¬´Ó¶ø¼ÆËã³öÃ¿¸öÃüÁî×î¶àĞèÒª¶àÉÙ¸ö²ÎÊı£¬×îÉÙĞèÒª¶àÉÙ¸ö²ÎÊı
-                                        #½öÓÃÓÚ·½·¨£¬»ñÈ¡·½·¨ÉùÃ÷µÄ²ÎÊı£¬·µ»ØÔª×é£¬·Ö±ğÊÇ(ÆÕÍ¨²ÎÊıÃûµÄÁĞ±í, *²ÎÊıÃû, **²ÎÊıÃû, Ä¬ÈÏÖµÔª×é)¡£Èç¹ûÃ»ÓĞÖµ£¬½«ÊÇ¿ÕÁĞ±íºÍ3¸öNone¡£Èç¹ûÊÇ2.6ÒÔÉÏ°æ±¾£¬½«·µ»ØÒ»¸öÃüÃûÔª×é(Named Tuple)£¬¼´³ıÁËË÷ÒıÍâ»¹¿ÉÒÔÊ¹ÓÃÊôĞÔÃû·ÃÎÊÔª×éÖĞµÄÔªËØ¡£
+        fn.usage = usage   #ä½¿ç”¨æ–¹æ³•
+        fn.opts = OPTIONS[:] + opts   #å½“å‰å‘½ä»¤çš„å‚æ•°æœ‰å“ªäº›
+        fn.keys = list(opt[0] for opt in opts) #ä¿å­˜çš„çŸ­å‘½ä»¤çš„å€¼
+        fn.aliases = aliases    #å½“å‰å‘½ä»¤çš„åˆ«å
+        spec = inspect.getargspec(fn)   #åŠŸèƒ½æ˜¯è·å–å‡½æ•°fnæ‰€å®šä¹‰çš„å‚æ•°åç§°ï¼Œå¯¹fnè¿›è¡Œè§£æï¼Œè®¡ç®—å‡ºå‚æ•°çš„ä¸ªæ•°ï¼Œå’Œæœ‰é»˜è®¤å€¼å‚æ•°çš„ä¸ªæ•°ï¼Œä»è€Œè®¡ç®—å‡ºæ¯ä¸ªå‘½ä»¤æœ€å¤šéœ€è¦å¤šå°‘ä¸ªå‚æ•°ï¼Œæœ€å°‘éœ€è¦å¤šå°‘ä¸ªå‚æ•°
+                                        #ä»…ç”¨äºæ–¹æ³•ï¼Œè·å–æ–¹æ³•å£°æ˜çš„å‚æ•°ï¼Œè¿”å›å…ƒç»„ï¼Œåˆ†åˆ«æ˜¯(æ™®é€šå‚æ•°åçš„åˆ—è¡¨, *å‚æ•°å, **å‚æ•°å, é»˜è®¤å€¼å…ƒç»„)ã€‚å¦‚æœæ²¡æœ‰å€¼ï¼Œå°†æ˜¯ç©ºåˆ—è¡¨å’Œ3ä¸ªNoneã€‚å¦‚æœæ˜¯2.6ä»¥ä¸Šç‰ˆæœ¬ï¼Œå°†è¿”å›ä¸€ä¸ªå‘½åå…ƒç»„(Named Tuple)ï¼Œå³é™¤äº†ç´¢å¼•å¤–è¿˜å¯ä»¥ä½¿ç”¨å±æ€§åè®¿é—®å…ƒç»„ä¸­çš„å…ƒç´ ã€‚
         defct = len(spec.defaults) if spec.defaults else 0
         argct = len(spec.args) if spec.args else 0
-        fn.min_arity = argct - defct   #µ±Ç°ÃüÁî£¬ÔÊĞíµÄ×îĞ¡²ÎÊı¸öÊı
-        fn.max_arity = argct	##µ±Ç°ÃüÁî£¬ÔÊĞíµÄ×î´ó²ÎÊı¸öÊı
+        fn.min_arity = argct - defct   #å½“å‰å‘½ä»¤ï¼Œå…è®¸çš„æœ€å°å‚æ•°ä¸ªæ•°
+        fn.max_arity = argct	##å½“å‰å‘½ä»¤ï¼Œå…è®¸çš„æœ€å¤§å‚æ•°ä¸ªæ•°
         fn.name = name or fn.__name__.replace('_', '-')
 
         bind_action(fn.name, fn, aliases)
     return bind
 
-CMD_DIR_PATH = os.path.abspath(os.path.join( os.path.dirname(__file__), "cmd" )) #¸Ã±äÁ¿±£´æµÄÂ·¾¶Îª"~/andbug/lib/andbug/cmd"
+CMD_DIR_PATH = os.path.abspath(os.path.join( os.path.dirname(__file__), "cmd" )) #è¯¥å˜é‡ä¿å­˜çš„è·¯å¾„ä¸º"~/andbug/lib/andbug/cmd"
 
-#½«cmdÄ¿Â¼ÏÂ£¬ËùÓĞ*.pyÎÄ¼ş¶¼import½øÀ´£¬¶¯Ì¬¼ÓÔØÄ£¿éµÄ³ÌĞòÖĞµÄÒ»¸ö¹ı³Ì
+#å°†cmdç›®å½•ä¸‹ï¼Œæ‰€æœ‰*.pyæ–‡ä»¶éƒ½importè¿›æ¥ï¼ŒåŠ¨æ€åŠ è½½æ¨¡å—çš„ç¨‹åºä¸­çš„ä¸€ä¸ªè¿‡ç¨‹
 def load_commands():
     'loads commands from the andbug.cmd package'  
     for name in os.listdir(CMD_DIR_PATH):
@@ -245,14 +245,14 @@ def load_commands():
         if name.endswith( '.py' ):
             name = 'andbug.cmd.' + name[:-3]
             try:
-                __import__( name )  #¶¯Ì¬µ¼ÈëÆäËûÄ£¿é£¬ÕâÊÇ»áÖ´ĞĞ£¬Ö¸¶¨pythonÎÄ¼şÖĞµÄ@andbug.command.actionº¯Êı
+                __import__( name )  #åŠ¨æ€å¯¼å…¥å…¶ä»–æ¨¡å—ï¼Œè¿™æ˜¯ä¼šæ‰§è¡Œï¼ŒæŒ‡å®špythonæ–‡ä»¶ä¸­çš„@andbug.command.actionå‡½æ•°
             except andbug.errors.DependencyError:
                 pass # okay, okay..
 
 
-#Ö´ĞĞµ÷ÊÔÃüÁî£¬Ã¿¸öµ÷ÊÔÃüÁî¶¼´ÓÕâ¸öº¯Êı¿ªÊ¼
-#²ÎÊı:	args ÃüÁîµÄÃû³ÆÒÔ¼°Ïà¹Ø²ÎÊı
-#	ctxt = None   ÓÃÓÚÖ§³ÖÃüÁîÖ´ĞĞµÄÀà³ÉÔ±£¬Ï¸½ÚÎ´Öª
+#æ‰§è¡Œè°ƒè¯•å‘½ä»¤ï¼Œæ¯ä¸ªè°ƒè¯•å‘½ä»¤éƒ½ä»è¿™ä¸ªå‡½æ•°å¼€å§‹
+#å‚æ•°:	args å‘½ä»¤çš„åç§°ä»¥åŠç›¸å…³å‚æ•°
+#	ctxt = None   ç”¨äºæ”¯æŒå‘½ä»¤æ‰§è¡Œçš„ç±»æˆå‘˜ï¼Œç»†èŠ‚æœªçŸ¥
 def run_command(args, ctxt = None):
     'runs the specified command with a new context'
     if ctxt is None:
@@ -265,7 +265,7 @@ def run_command(args, ctxt = None):
     
     return ctxt.perform(args[0], args[1:])
 
-#¶¨Òå±¾ÎÄ¼şÏòÆäËûÎÄ¼ş¿ÉÒÔµ½´¦µÄº¯Êı¡¢±äÁ¿µÄÃû³Æ
+#å®šä¹‰æœ¬æ–‡ä»¶å‘å…¶ä»–æ–‡ä»¶å¯ä»¥åˆ°å¤„çš„å‡½æ•°ã€å˜é‡çš„åç§°
 __all__ = (
     'run_command', 'load_commands', 'action', 'Context', 'OptionError'
 )
@@ -273,26 +273,26 @@ __all__ = (
 
 
 '''
-inspect.getargspec(fn) º¯ÊıµÄÊ¹ÓÃ
+inspect.getargspec(fn) å‡½æ•°çš„ä½¿ç”¨
 
-ÔÚexample.pyÎÄ¼şÖĞ
+åœ¨example.pyæ–‡ä»¶ä¸­
 def module_level_function(arg1, arg2='default', *args, **kwargs):
 	#This function is declared in the module.
 	local_variable = arg1
 
-ÔÚuse_inspectÎÄ¼şÖĞ
+åœ¨use_inspectæ–‡ä»¶ä¸­
 import inspect
 import example
 
 argspec = inspect.getargspec(example.module_level_function)
 print 'Names', argsec[0]
-print '*£º'£¬ argspec[1]
+print '*ï¼š'ï¼Œ argspec[1]
 print '**:', argspec[2]
 print 'default:', argspec[3]
 arg_with_defaults= argspec[0][-len(argspec[3]):]
 print 'arg & defaults:', zip(arg_with_defaults, argspec[3])
 
-ÔËĞĞºóµÄ½á¹û£º
+è¿è¡Œåçš„ç»“æœï¼š
 Names: ['arg1', 'arg2']
 *: args
 **: kwargs

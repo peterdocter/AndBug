@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+ï»¿#!/usr/bin/env python
 # -*- coding: utf-8 -*- 
 
 ## Copyright 2011, IOActive, Inc. All rights reserved.
@@ -16,7 +16,7 @@
 ## along with AndBug.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#Õâ¸öÄ£¿é¿ÉÒÔµ¥¶À²âÊÔÒÔ¸ãÇå³şÊµÏÖÔ­Àí
+#è¿™ä¸ªæ¨¡å—å¯ä»¥å•ç‹¬æµ‹è¯•ä»¥ææ¸…æ¥šå®ç°åŸç†
 
 
 
@@ -37,7 +37,7 @@ class multidict(dict):
             v.append(val)
             dict.__setitem__(self, key, v)
  
-    def __setitem__(self, key, val):  #ÓÃÓÚ¶ÔÓ¦×ÖµäµÄ[]²Ù×÷·û
+    def __setitem__(self, key, val):  #ç”¨äºå¯¹åº”å­—å…¸çš„[]æ“ä½œç¬¦
         self.put(key, val)
     
     def __getitem__(self, key):
@@ -45,7 +45,7 @@ class multidict(dict):
 
 class pool(object):
     '''
-    a pool of singleton[µ¥¶ÀµÄ] objects such that, for any combination[ÁªºÏÌå] of constructor 
+    a pool of singleton[å•ç‹¬çš„] objects such that, for any combination[è”åˆä½“] of constructor 
     and 1 or more initializers, there may be zero or one objects; attempting
     to reference a nonexisted object causes it to be created.
 
@@ -61,44 +61,25 @@ class pool(object):
         self.pools = {}
         self.lock = Lock()
 	
-	#µ÷ÓÃ·½Ê½£ºreturn pool(classitem, self.cid)
-    def __call__(self, *ident):  #µ÷ÓÃ·½Ê½£ºm1 = pool(methoditem, 'c1', 'm1')  
+	#è°ƒç”¨æ–¹å¼ï¼šreturn pool(classitem, self.cid)
+    def __call__(self, *ident):  #è°ƒç”¨æ–¹å¼ï¼šm1 = pool(methoditem, 'c1', 'm1')  
         with self.lock:
             pool = self.pools.get(ident)
             if pool is None:
-                pool = ident[0](*ident[1:])  #ÕâÀï»á³öÏÖÊ²Ã´ÑùµÄÔËËã½á¹û»¹²»Çå³ş
+                pool = ident[0](*ident[1:])  #è¿™é‡Œä¼šå‡ºç°ä»€ä¹ˆæ ·çš„è¿ç®—ç»“æœè¿˜ä¸æ¸…æ¥š
                 self.pools[ident] = pool
             return pool
-    '''
-¶Ôdef __call__(self, *ident)º¯ÊıµÄµ÷ÓÃ·½Ê½obj = self.pool(Class, self, tid)
-Ôö¼ÓÏÂÃæµ÷ÊÔĞÅÏ¢£º
-                print "ident[0]="+str(ident[0])
-                print type(ident[0])
-                print "ident[1]="+str(ident[1]) 
-                print type(ident[1])
-                print "ident[2]="+str(ident[2]) 
-                print type(ident[2])
-¿ÉÒÔ»ñµÃÈçÏÂµ÷ÊÔÄÚÈİ
-ident[0]=<class 'andbug.vm.Class'>
-<type 'type'>
-ident[1]=<andbug.vm.Session object at 0x87eb20c>
-<class 'andbug.vm.Session'>
-ident[2]=834311174200
-<type 'long'>
 
-    '''
-			
-#Ê¹ÓÃ·½Ê½£ºv = view((m1,m2,m3))
 class view(object):
     '''
-    a homogenous[Í¬ÀàµÄ] collection[²É¼¯] of objects that may be acted upon in unison, such
+    a homogenous collection of objects that may be acted upon in unison, such
     that calling a method on the collection with given arguments would result
     in calling that method on each object and returning the results as a list
     '''
 
     def __init__(self, items = []):
         self.items = list(items)
-    def __repr__(self):  #×Ö·û´®ÖØ¸´
+    def __repr__(self):  #å­—ç¬¦ä¸²é‡å¤
         return '(' + ', '.join(str(item) for item in self.items) + ')'
     def __len__(self):
         return len(self.items)
@@ -106,7 +87,7 @@ class view(object):
         return self.items[index]
     def __iter__(self):
         return iter(self.items)
-    def __getattr__(self, key): #µ±ÊôĞÔÃ»ÓĞÕÒµ½Ê±µ÷ÓÃ 
+    def __getattr__(self, key): #å½“å±æ€§æ²¡æœ‰æ‰¾åˆ°æ—¶è°ƒç”¨ 
         def poolcall(*args, **kwargs):
             t = tuple( 
                 getattr(item, key)(*args, **kwargs) for item in self.items
@@ -121,7 +102,7 @@ class view(object):
     
     def get(self, key):
         '''
-            descript:Í¨¹ı¶ÔlistÖĞµÄÃ¿¸ö³ÉÔ±µ÷ÓÃgetattrº¯Êı£¬ÊµÏÖ½«ËùÓĞĞÅÏ¢¼ìË÷³öÀ´
+            descript:é€šè¿‡å¯¹listä¸­çš„æ¯ä¸ªæˆå‘˜è°ƒç”¨getattrå‡½æ•°ï¼Œå®ç°å°†æ‰€æœ‰ä¿¡æ¯æ£€ç´¢å‡ºæ¥
         '''
         return view(getattr(item, key) for item in self.items)
     def set(self, key, val):
@@ -130,17 +111,17 @@ class view(object):
     def append(self, val):
         self.items.append(val)
 
-#º¯Êı¹¦ÄÜ£º½«¶şÎ¬µÄÊı×é£¬Õ¹¿ª³ÉÒ»Î¬Êı×é
+#å‡½æ•°åŠŸèƒ½ï¼šå°†äºŒç»´çš„æ•°ç»„ï¼Œå±•å¼€æˆä¸€ç»´æ•°ç»„
 def flatten(seq):
     for ss in seq:
         for s in ss:
             yield s
 			
-#£¿ÍÆ³ÙÑÓÆÚ			
-#¾ßÌåµ÷ÓÃ·½Ê½ÊÇ£ºfirst = defer(load_line_table, 'first')
+#ï¼Ÿæ¨è¿Ÿå»¶æœŸ			
+#å…·ä½“è°ƒç”¨æ–¹å¼æ˜¯ï¼šfirst = defer(load_line_table, 'first')
 def defer(func, name):
     '''
-    a property¡¾ĞÔÖÊ¡¿ decorator¡¾×°ÊÎÕß¡¿ that, when applied, specifies a property that relies
+    a propertyã€æ€§è´¨ã€‘ decoratorã€è£…é¥°è€…ã€‘ that, when applied, specifies a property that relies
     on the execution of a costly function for its resolution; this permits the
     deferral of evaluation until the first time it is needed.
 
@@ -149,7 +130,7 @@ def defer(func, name):
     '''
     def fget(obj, type=None):   
         try:
-            return obj.props[name]  #°´ÕÕÖ¸¶¨µÄÒªÇóÈ¡ÔªËØ£¬Ò»µ©»ñÈ¡Ê§°Ü¾Í´¦·£Òì³££¬ÓÚÊÇÖ´ĞĞÏÂÃæµÄfunc(obj)º¯Êı
+            return obj.props[name]  #æŒ‰ç…§æŒ‡å®šçš„è¦æ±‚å–å…ƒç´ ï¼Œä¸€æ—¦è·å–å¤±è´¥å°±å¤„ç½šå¼‚å¸¸ï¼Œäºæ˜¯æ‰§è¡Œä¸‹é¢çš„func(obj)å‡½æ•°
         except KeyError:
             pass
         except AttributeError:
@@ -165,12 +146,12 @@ def defer(func, name):
         except AttributeError:
             obj.props = {name : value}
 
-    fget.func_name = 'get_' + name  #func_name Ã»ÄÜÕÒµ½Ïà¹Ø×ÊÁÏ
+    fget.func_name = 'get_' + name  #func_name æ²¡èƒ½æ‰¾åˆ°ç›¸å…³èµ„æ–™
     fset.func_name = 'set_' + name
-    return property(fget, fset)  #ÉèÖÃµ±»ñÈ¡ÖµÊ±µ÷ÓÃfgetº¯Êı£¬µ±ÉèÖÃÖµÊÇµ÷ÓÃfsetº¯Êı
+    return property(fget, fset)  #è®¾ç½®å½“è·å–å€¼æ—¶è°ƒç”¨fgetå‡½æ•°ï¼Œå½“è®¾ç½®å€¼æ˜¯è°ƒç”¨fsetå‡½æ•°
 
 	
-#ÏÂÃæÓ¦¸Ã¶¼ÊÇÓÃÓÚ²âÊÔµÄ´úÂë
+#ä¸‹é¢åº”è¯¥éƒ½æ˜¯ç”¨äºæµ‹è¯•çš„ä»£ç 
 if __name__ == '__main__':
     pool = pool()
 
@@ -193,7 +174,7 @@ if __name__ == '__main__':
             self.first = 1
             self.last = 1
             self.lines = []
-        def trace(self): #¸ú×ÙµÄÒâË¼
+        def trace(self): #è·Ÿè¸ªçš„æ„æ€
             print "TRACE", self.cid, self.mid
 
         first = defer(load_line_table, 'first')

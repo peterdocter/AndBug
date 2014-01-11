@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+﻿#!/usr/bin/env python
 # -*- coding: utf-8 -*- 
 
 ## Copyright 2011, Felipe Barriga Richards <spam@felipebarriga.cl>.
@@ -20,7 +20,7 @@
 
 import andbug.command, andbug.screed
 
-@andbug.command.action('', name='break-list', shell=True)
+@andbug.command.action('', name='break-list', aliases=('bl',),  shell=True)
 def break_list(ctxt):
     'list active breakpoints/hooks'
     with andbug.screed.section('Active Hooks'):

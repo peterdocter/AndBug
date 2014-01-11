@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+ï»¿#!/usr/bin/env python
 # -*- coding: utf-8 -*- 
 
 ## Copyright 2011, IOActive, Inc. All rights reserved.
@@ -20,7 +20,7 @@ The andbug.proto module abstracts the JDWP wire protocol into a more
 manageable request/response API using an input worker thread in the
 background and a number of mutexes to control contests for output.
 '''
-#½«JDWP ³éÏó³ÉÒ»ÏµÁĞ¡°ÇëÇó/ÏìÓ¦¡±
+#å°†JDWP æŠ½è±¡æˆä¸€ç³»åˆ—â€œè¯·æ±‚/å“åº”â€
 
 
 import socket, tempfile
@@ -33,7 +33,7 @@ from andbug import log
 from andbug.jdwp import JdwpBuffer
 
 class EOF(Exception):
-    'signals that an EOF[Ö¡½áÊø] has been encountered[Óöµ½¡¢ÔâÓö]'
+    'signals that an EOF[å¸§ç»“æŸ] has been encountered[é‡åˆ°ã€é­é‡]'
     def __init__(self, inner = None):
         Exception.__init__(
             self, str(inner) if inner else "EOF"
@@ -60,21 +60,21 @@ IDSZ_REQ = (
 
 #adb -s [dev] forward localfilesystem: [temp] jdwp [pid]
 #adb -s emulator-5554 forward  localfilesystem:/tmp/tmpzeJZR5 jdwp:333 
-#ÓëĞéÄâ»ú½¨Á¢Á´½Ó
+#ä¸è™šæ‹Ÿæœºå»ºç«‹é“¾æ¥
 def forward(pid, dev=None):
     'constructs an adb forward for the context to access the pid via jdwp'
     if dev:
         dev = andbug.util.find_dev(dev)
     pid = andbug.util.find_pid(pid)
-    temp = tempfile.mktemp() #´´½¨Ò»¸öÁÙÊ±ÎÄ¼ş
+    temp = tempfile.mktemp() #åˆ›å»ºä¸€ä¸ªä¸´æ—¶æ–‡ä»¶
     cmd = ('-s', dev) if dev else ()  #'-s', 'emulator-5554'
     cmd += ('forward', 'localfilesystem:' + temp,  'jdwp:%s' % pid) #'-s', 'emulator-5554', 'forward', 'localfilesystem:/tmp/tmpSSCNAl', 'jdwp:843')
     andbug.util.adb(*cmd)
     return temp
 
-#µ÷ÓÃÊ±µÄ·½Ê½£ºandbug.proto.connect(andbug.proto.forward(pid, dev))
+#è°ƒç”¨æ—¶çš„æ–¹å¼ï¼šandbug.proto.connect(andbug.proto.forward(pid, dev))
 #self.sess = andbug.vm.connect(self.pid, self.dev)
-# addr ²ÎÊıÊÇÒ»¸öÁÙÊ±ÎÄ¼şµÄÂ·¾¶
+# addr å‚æ•°æ˜¯ä¸€ä¸ªä¸´æ—¶æ–‡ä»¶çš„è·¯å¾„
 def connect(addr, portno = None, trace=False):
     'connects to an AF_UNIX or AF_INET JDWP transport'
     if addr and portno:
@@ -85,7 +85,7 @@ def connect(addr, portno = None, trace=False):
         conn = socket.socket(socket.AF_UNIX)
         conn.connect(addr)
 
-	#¸ºÔğ¶Á³öÊı¾İµÄº¯Êı
+	#è´Ÿè´£è¯»å‡ºæ•°æ®çš„å‡½æ•°
     def read(amt):
         'read wrapper internal to andbug.proto.connect'
         req = amt
@@ -99,7 +99,7 @@ def connect(addr, portno = None, trace=False):
             print ":: RECV:", repr(buf)
         return buf 
     
-	#¸ºÔğĞ´ÈëÊı¾İµÄº¯Êı
+	#è´Ÿè´£å†™å…¥æ•°æ®çš„å‡½æ•°
     def write(data):
         'write wrapper internal to andbug.proto.connect'
         try:
@@ -109,18 +109,18 @@ def connect(addr, portno = None, trace=False):
         except Exception as exc:
             raise EOF(exc)
         
-    p = Connection(read, write)  #¶¨ÒåÒ»¸öConnection¶ÔÏó
+    p = Connection(read, write)  #å®šä¹‰ä¸€ä¸ªConnectionå¯¹è±¡
     p.start()
     return p
 
 class Connection(Thread):
     '''
-    The JDWP Connection is a thread which abstracts the asynchronous[Òì²½] JDWP protocol
+    The JDWP Connection is a thread which abstracts the asynchronous[å¼‚æ­¥] JDWP protocol
     into a more synchronous one.  The thread will listen for packets using the
-    supplied[Ìá¹©] read function, and transmit[´«ËÍ] them using the write function.  
+    supplied[æä¾›] read function, and transmit[ä¼ é€] them using the write function.  
 
     Requests are sent by the processor using the calling thread, with a mutex 
-    used to protect the write function from concurrent[²¢·¢µÄ] access.  The requesting
+    used to protect the write function from concurrent[å¹¶å‘çš„] access.  The requesting
     thread is then blocked waiting on a response from the processor thread.
 
     The Connectionor will repeatedly use the read function to receive packets, which
@@ -131,95 +131,95 @@ class Connection(Thread):
 
     def __init__(self, read, write):
         Thread.__init__(self)
-        self.xmitbuf = JdwpBuffer()  #¾ßÌåÊµÏÖÔÚjdwpÎÄ¼şÖĞ£¬ÓÃCÓïÑÔÊµÏÖ£¬Õâ¿éĞèÒªÁË½âCÓïÑÔÇ¶ÈëpythonÓïÑÔµÄÖªÊ¶
+        self.xmitbuf = JdwpBuffer()  #å…·ä½“å®ç°åœ¨jdwpæ–‡ä»¶ä¸­ï¼Œç”¨Cè¯­è¨€å®ç°ï¼Œè¿™å—éœ€è¦äº†è§£Cè¯­è¨€åµŒå…¥pythonè¯­è¨€çš„çŸ¥è¯†
         self.recvbuf = JdwpBuffer()
         self._read = read
         self.write = write
         self.initialized = False
-        self.next_id = 3  #ÏÂÒ»¸öÇëÇóid£¬¡º¿ÉÄÜÃ¿´ÎÇëÇó¶¼ÊÇÓĞĞòºÅµÄ¡»
-        self.bindqueue = Queue()  #¶¨ÒåÒ»¸öÏÈ½øÏÈ³öµÄ¶ÓÁĞ
-        self.qmap = {}   #³õÊ¼»¯Ò»¸ö¿ÕµÄ×Öµä
-        self.rmap = {}   #³õÊ¼»¯Ò»¸ö¿ÕµÄ×Öµä
-        self.xmitlock = Lock()  #ÊÇÒ»¸ö»¥³âËø
+        self.next_id = 3  #ä¸‹ä¸€ä¸ªè¯·æ±‚idï¼Œã€å¯èƒ½æ¯æ¬¡è¯·æ±‚éƒ½æ˜¯æœ‰åºå·çš„ã€
+        self.bindqueue = Queue()  #å®šä¹‰ä¸€ä¸ªå…ˆè¿›å…ˆå‡ºçš„é˜Ÿåˆ—
+        self.qmap = {}   #åˆå§‹åŒ–ä¸€ä¸ªç©ºçš„å­—å…¸
+        self.rmap = {}   #åˆå§‹åŒ–ä¸€ä¸ªç©ºçš„å­—å…¸
+        self.xmitlock = Lock()  #æ˜¯ä¸€ä¸ªäº’æ–¥é”
 
-    #¶ÁÊı¾İµÄº¯Êı£¬sz×¼±¸¶ÁÈ¡Êı¾İµÄ³¤¶È£¬
+    #è¯»æ•°æ®çš„å‡½æ•°ï¼Œszå‡†å¤‡è¯»å–æ•°æ®çš„é•¿åº¦ï¼Œ
     def read(self, sz):
         'read size bytes'
         if sz == 0: return ''
-        pkt = self._read(sz)  #·µ»ØÖµÊÇ¶Áµ½µÄÊı¾İ
-        if not len(pkt): raise EOF()   #Èç¹û¶Áµ½µÄÊı¾İµÄ³¤¶ÈÎª0£¬Å×³öEOFÒì³£
+        pkt = self._read(sz)  #è¿”å›å€¼æ˜¯è¯»åˆ°çš„æ•°æ®
+        if not len(pkt): raise EOF()   #å¦‚æœè¯»åˆ°çš„æ•°æ®çš„é•¿åº¦ä¸º0ï¼ŒæŠ›å‡ºEOFå¼‚å¸¸
         return pkt
 
     ###################################################### INITIALIZATION STEPS
     
-    #Ğ´ÈëidĞòÁĞĞÅÏ¢
+    #å†™å…¥idåºåˆ—ä¿¡æ¯
     def writeIdSzReq(self):
         'write an id size request'
         return self.write(IDSZ_REQ)
 
-	#¶ÁÈ¡¸÷idµÄ³¤¶ÈĞÅÏ¢
+	#è¯»å–å„idçš„é•¿åº¦ä¿¡æ¯
     def readIdSzRes(self):
         'read an id size response'
-        head = self.readHeader()  #¶Áµ½µÄheaderµÄÖµÊÇ£ºlist: [20L, 1L, 128L, 0L] £ÛLength, Id£¬Flags, Error Code£İ
-        if head[0] != 20: #id sizeÃüÁîµÄ·µ»ØÊı¾İ°üµÄ³¤¶ÈÎª20×Ö½Ú£¬ÆäÖĞ°üÀ¨11×Ö½ÚµÄ°üÍ·³¤¶È¡£
-            raise ProtocolError('expected size of an idsize response') #Å×³öĞ­Òé´íÎóÒì³£
-        if head[2] != 0x80:  #·µ»Ø°ü°üÍ·ÖĞµÄFlags×Ö¶ÎµÄÖµÊÇ¹Ì¶¨µÄ¾ùÎª0x80¼´128
+        head = self.readHeader()  #è¯»åˆ°çš„headerçš„å€¼æ˜¯ï¼šlist: [20L, 1L, 128L, 0L] ï¼»Length, Idï¼ŒFlags, Error Codeï¼½
+        if head[0] != 20: #id sizeå‘½ä»¤çš„è¿”å›æ•°æ®åŒ…çš„é•¿åº¦ä¸º20å­—èŠ‚ï¼Œå…¶ä¸­åŒ…æ‹¬11å­—èŠ‚çš„åŒ…å¤´é•¿åº¦ã€‚
+            raise ProtocolError('expected size of an idsize response') #æŠ›å‡ºåè®®é”™è¯¯å¼‚å¸¸
+        if head[2] != 0x80:  #è¿”å›åŒ…åŒ…å¤´ä¸­çš„Flagså­—æ®µçš„å€¼æ˜¯å›ºå®šçš„å‡ä¸º0x80å³128
             raise ProtocolError(
-                'expected first server message to be a response' #Å×³öĞ­Òé´íÎóÒì³£
+                'expected first server message to be a response' #æŠ›å‡ºåè®®é”™è¯¯å¼‚å¸¸
             )
-        if head[1] != 1: #ÓÉÓÚ·¢ËÍid sizeÇëÇó°üµÄid±àºÅÊÇ1£¬ËùÒÔºÏ·¨µÄ·µ»Ø°üµÄ±àºÅÒ²Ó¦ÓÃÊÇ1
-            raise ProtocolError('expected first server message to be 1')  #Å×³öĞ­Òé´íÎóÒì³£
+        if head[1] != 1: #ç”±äºå‘é€id sizeè¯·æ±‚åŒ…çš„idç¼–å·æ˜¯1ï¼Œæ‰€ä»¥åˆæ³•çš„è¿”å›åŒ…çš„ç¼–å·ä¹Ÿåº”ç”¨æ˜¯1
+            raise ProtocolError('expected first server message to be 1')  #æŠ›å‡ºåè®®é”™è¯¯å¼‚å¸¸
 
         sizes = self.recvbuf.unpack( 'iiiii', self.read(20) )
-        self.sizes = sizes #¶ÁÈ¡µ½µÄsizesµÄÖµÊÇ list: [4L, 4L, 8L, 8L, 8L] ¼ÇÂ¼ÏÂ¸÷ÀàĞÍ¶ÔÏóËùÕ¼¿Õ¼äµÄ³¤¶È
+        self.sizes = sizes #è¯»å–åˆ°çš„sizesçš„å€¼æ˜¯ list: [4L, 4L, 8L, 8L, 8L] è®°å½•ä¸‹å„ç±»å‹å¯¹è±¡æ‰€å ç©ºé—´çš„é•¿åº¦
         self.recvbuf.config(*sizes) 
         self.xmitbuf.config(*sizes)
         return None
 
-	#½ÓÊÕÎÕÊÖÊı¾İ
+	#æ¥æ”¶æ¡æ‰‹æ•°æ®
     def readHandshake(self):
         'read the jdwp handshake'
         data = self.read(len(HANDSHAKE_MSG))
         if data != HANDSHAKE_MSG:
-            raise HandshakeError()  #Å×³öÎÕÊÖÊ§°ÜÒì³£
-    #·¢ËÍÎÕÊÖÊı¾İ    
+            raise HandshakeError()  #æŠ›å‡ºæ¡æ‰‹å¤±è´¥å¼‚å¸¸
+    #å‘é€æ¡æ‰‹æ•°æ®    
     def writeHandshake(self):
         'write the jdwp handshake'
         return self.write(HANDSHAKE_MSG)
 
     ############################################### READING / PROCESSING PACKETS
     
-    #¶ÁÈ¡Í·£¬ÔÚreadIdSzRes(self)º¯ÊıÖĞ±»µ÷ÓÃ
+    #è¯»å–å¤´ï¼Œåœ¨readIdSzRes(self)å‡½æ•°ä¸­è¢«è°ƒç”¨
     def readHeader(self):
         'reads a header and returns [size, id, flags, event]'
         head = self.read(11)  
-        data = self.recvbuf.unpack(HEADER_FORMAT, head)  #unpackº¯ÊıÔÚjdwpÎÄ¼şÖĞÊµÏÖ
+        data = self.recvbuf.unpack(HEADER_FORMAT, head)  #unpackå‡½æ•°åœ¨jdwpæ–‡ä»¶ä¸­å®ç°
         data[0] -= 11
         return data
-    #Æô¶¯ĞÂµÄÏß³Ì£¬À´´¦Àí´ÓĞéÄâ»úÖĞ·µ»ØµÄĞÅÏ¢¡£processº¯Êı±»·ÅÔÚÒ»¸öËÀÑ­»·ÖĞ²»¶Ïµ÷ÓÃ
+    #å¯åŠ¨æ–°çš„çº¿ç¨‹ï¼Œæ¥å¤„ç†ä»è™šæ‹Ÿæœºä¸­è¿”å›çš„ä¿¡æ¯ã€‚processå‡½æ•°è¢«æ”¾åœ¨ä¸€ä¸ªæ­»å¾ªç¯ä¸­ä¸æ–­è°ƒç”¨
     def process(self):
         'invoked repeatedly by the processing thread'
 
-        size, ident, flags, code = self.readHeader() #TODO: HANDLE CLOSE  #¶ÁÈ¡Êı¾İÍ·£¬°üº¬Ò»ÏÂÔªËØsize¡¢ident¡¢flags¡¢code
+        size, ident, flags, code = self.readHeader() #TODO: HANDLE CLOSE  #è¯»å–æ•°æ®å¤´ï¼ŒåŒ…å«ä¸€ä¸‹å…ƒç´ sizeã€identã€flagsã€code
         log.debug("study", "In Connection(Thread).process size=" + str(size) + "\t ident="+ str(ident) + "\t flags=" +str(flags) + "\t code=" + str(code))
-        data = self.read(size) #TODO: HANDLE CLOSE  #¸ù¾İHeaderÖĞµÄ³¤¶ÈĞÅÏ¢£¬¶ÁÈ¡¾ßÌåÊı¾İ¡£
-        try: # We process binds[°ó¶¨] after receiving messages to prevent a race
+        data = self.read(size) #TODO: HANDLE CLOSE  #æ ¹æ®Headerä¸­çš„é•¿åº¦ä¿¡æ¯ï¼Œè¯»å–å…·ä½“æ•°æ®ã€‚
+        try: # We process binds[ç»‘å®š] after receiving messages to prevent a race
             while True:
-                self.processBind(*self.bindqueue.get(False)) #bindqueue.get(False)²ÎÊıÎªFalse£¬¶ÓÁĞ½«Òı·¢EmptyÒì³£
+                self.processBind(*self.bindqueue.get(False)) #bindqueue.get(False)å‚æ•°ä¸ºFalseï¼Œé˜Ÿåˆ—å°†å¼•å‘Emptyå¼‚å¸¸
         except EmptyQueue:
             log.debug("study", "Except for Empty Queue")
             pass
 
         #TODO: update binds with all from bindqueue
-        #¶ÔÓÚÀ´×ÔĞéÄâ»úµÄÊÂ¼şÏûÏ¢£¬self.processBind(*self.bindqueue.get(False))²»Æğ×÷ÓÃ£¬Ö±½Ó´¥·¢EmptyQueueÒì³££¬ºóĞøµ÷ÓÃprocessRequestº¯Êı
+        #å¯¹äºæ¥è‡ªè™šæ‹Ÿæœºçš„äº‹ä»¶æ¶ˆæ¯ï¼Œself.processBind(*self.bindqueue.get(False))ä¸èµ·ä½œç”¨ï¼Œç›´æ¥è§¦å‘EmptyQueueå¼‚å¸¸ï¼Œåç»­è°ƒç”¨processRequestå‡½æ•°
         if flags == 0x80:  
-            self.processResponse(ident, code, data)  #´ğ¸´Êı¾İ°üµÄflagÊÇ0x80
+            self.processResponse(ident, code, data)  #ç­”å¤æ•°æ®åŒ…çš„flagæ˜¯0x80
         else:
-            self.processRequest(ident, code, data)  #ÇëÇóÊı¾İ°üµÄflagÊÇ0x00
-    #º¯Êıµ÷ÓÃµÄ²ÎÊıÎª£ºqr="r" ident=16484=0x4064 chan ÊÇÒ»¸öÔÚSessionÀàÖĞ¶¨ÒåµÄÒ»¸ö¶ÓÁĞ¡£qr="q" ident=3 ÆäÖĞidentÊÇÇëÇóµÄ±àºÅid£¬µ÷ÊÔÆ÷·¢ÍùĞéÄâ»úµÄid´Ó3¿ªÊ¼
+            self.processRequest(ident, code, data)  #è¯·æ±‚æ•°æ®åŒ…çš„flagæ˜¯0x00
+    #å‡½æ•°è°ƒç”¨çš„å‚æ•°ä¸ºï¼šqr="r" ident=16484=0x4064 chan æ˜¯ä¸€ä¸ªåœ¨Sessionç±»ä¸­å®šä¹‰çš„ä¸€ä¸ªé˜Ÿåˆ—ã€‚qr="q" ident=3 å…¶ä¸­identæ˜¯è¯·æ±‚çš„ç¼–å·idï¼Œè°ƒè¯•å™¨å‘å¾€è™šæ‹Ÿæœºçš„idä»3å¼€å§‹
     def processBind(self, qr, ident, chan):
-        'internal[ÄÚ²¿µÄ] to i/o thread; performs a query or request bind'
-		#¸ù¾İqrÖµµÄ²»Í¬£¬ÒÔidentÎª¹Ø¼ü×Ö£¬ÒÔchanÎªÖµ£¬·ÅÈë²»Í¬µÄ×ÖµäÖĞ
+        'internal[å†…éƒ¨çš„] to i/o thread; performs a query or request bind'
+		#æ ¹æ®qrå€¼çš„ä¸åŒï¼Œä»¥identä¸ºå…³é”®å­—ï¼Œä»¥chanä¸ºå€¼ï¼Œæ”¾å…¥ä¸åŒçš„å­—å…¸ä¸­
         log.debug("study", "In Connection(Thread).processBind qr=" + str(qr) + "\t ident=" + str(ident) + "\t chan=" + str(chan))
         log.debug("study", "++bindqueue.get  FOR q ++")
         if qr == 'q':
@@ -228,52 +228,52 @@ class Connection(Thread):
             self.rmap[ident] = chan
            
 
-	#´¦ÀíÇëÇó
-    ##ÇëÇóÊı¾İ°üµÄflagÊÇ0x00
+	#å¤„ç†è¯·æ±‚
+    ##è¯·æ±‚æ•°æ®åŒ…çš„flagæ˜¯0x00
     def processRequest(self, ident, code, data):
         'internal to the i/o thread w/ recv ctrl; processes incoming request'
         log.debug("study", "In Connection.processRequest ident=" + str(ident) + "\t code=" + str(code) + "\t data=")
-        chan = self.rmap.get(code)  #ËùÓĞÖĞ¶Ï¶¼ÓÉ¸Ãchan¶ÓÁĞ´¦Àí£¬Ã¿´ÎÖ»ÊÇ´Órmap¶Á³öÄÚÈİ£¬¶øÃ»ÓĞ½«rmap¶ÔÓ¦µÄchanÇå³ı
+        chan = self.rmap.get(code)  #æ‰€æœ‰ä¸­æ–­éƒ½ç”±è¯¥chané˜Ÿåˆ—å¤„ç†ï¼Œæ¯æ¬¡åªæ˜¯ä»rmapè¯»å‡ºå†…å®¹ï¼Œè€Œæ²¡æœ‰å°†rmapå¯¹åº”çš„chanæ¸…é™¤
         if not chan: return #TODO
         buf = JdwpBuffer()
         buf.config(*self.sizes)
         buf.prepareUnpack(data)
-        return chan.put((ident, buf)) #½«½âÎöºóµÄÊı¾İÑ¹Èë¶ÓÁĞÖĞ
+        return chan.put((ident, buf)) #å°†è§£æåçš„æ•°æ®å‹å…¥é˜Ÿåˆ—ä¸­
      
-	#´¦ÀíÏàÓ¦£¬chan±äÁ¿ÊÇÊ²Ã´ÀàĞÍµÄĞèÒª¹Ø×¢£¬ÆäÓëÀàµÄ¶ÓÁĞ³ÉÔ±±äÁ¿self.bindqueueÓĞ¹Ø
-    #´ğ¸´Êı¾İ°üµÄflagÊÇ0x80   
+	#å¤„ç†ç›¸åº”ï¼Œchanå˜é‡æ˜¯ä»€ä¹ˆç±»å‹çš„éœ€è¦å…³æ³¨ï¼Œå…¶ä¸ç±»çš„é˜Ÿåˆ—æˆå‘˜å˜é‡self.bindqueueæœ‰å…³
+    #ç­”å¤æ•°æ®åŒ…çš„flagæ˜¯0x80   
     def processResponse(self, ident, code, data):
         'internal to the i/o thread w/ recv ctrl; processes incoming response'
         log.debug("study", "In Connection.processResponse ident=" + str(ident) + "\t code=" + str(code) + "\t data=")
-        chan = self.qmap.pop(ident, None) #´Ó×ÖµäÖĞ¶ÁÈ¡£¬²¢É¾³ı¸ÃÊı¾İ
+        chan = self.qmap.pop(ident, None) #ä»å­—å…¸ä¸­è¯»å–ï¼Œå¹¶åˆ é™¤è¯¥æ•°æ®
         if not chan: return
         buf = JdwpBuffer()
         buf.config(*self.sizes)
         buf.prepareUnpack(data)
         return chan.put((code, buf))
 
-	#µ÷ÓÃµÄÊµ¼ÊÇé¿öÎª£ºconn.hook(0x4064, self.evtq)£¬ÆäÖĞself.evtqÊÇÒ»¸ö¶ÓÁĞ
+	#è°ƒç”¨çš„å®é™…æƒ…å†µä¸ºï¼šconn.hook(0x4064, self.evtq)ï¼Œå…¶ä¸­self.evtqæ˜¯ä¸€ä¸ªé˜Ÿåˆ—
     def hook(self, code, chan):
         '''
         when code requests are received, they will be put in chan for
         processing
         '''
 
-		#Ê¹ÓÃËø
+		#ä½¿ç”¨é”
         with self.xmitlock:
-            self.bindqueue.put(('r', code, chan)) #¼ÓÈëÒ»¸öÏÈ½øÏÈ³öµÄ¶ÓÁĞ
+            self.bindqueue.put(('r', code, chan)) #åŠ å…¥ä¸€ä¸ªå…ˆè¿›å…ˆå‡ºçš„é˜Ÿåˆ—
             log.debug("study", "++ for hook function bindqueue.put  FOR r ++ code=" + str(code))
         
     ####################################################### TRANSMITTING PACKETS
     
-	#ÉêÇëÒ»¸öÇëÇóid
+	#ç”³è¯·ä¸€ä¸ªè¯·æ±‚id
     def acquireIdent(self):
-        'used internally by the processor; must have xmit[´«Êä] control'
+        'used internally by the processor; must have xmit[ä¼ è¾“] control'
         ident = self.next_id
         self.next_id += 2
         return ident
 
-	#·¢ËÍ[Ğ´Èë]Ö¸¶¨µÄÊı¾İ
+	#å‘é€[å†™å…¥]æŒ‡å®šçš„æ•°æ®
     def writeContent(self, ident, flags, code, body):
         'used internally by the processor; must have xmit control'
 
@@ -285,20 +285,20 @@ class Connection(Thread):
         self.write(data)
         return self.write(body)
 
-	#¹¹ÔìÇëÇó
+	#æ„é€ è¯·æ±‚
     def request(self, code, data='', timeout=None):
         'send a request, then waits for a response; returns response'
         queue = Queue()
         log.debug("study", "In Connection.request code=" + str(code) + "\t data=" + str(data))
         with self.xmitlock:
             ident = self.acquireIdent()
-            self.bindqueue.put(('q', ident, queue)) #Ã¿·¢ËÍÒ»¸öÇëÇóÏòbindqueueÖĞÑ¹ÈëÒ»¸öÊı¾İ
+            self.bindqueue.put(('q', ident, queue)) #æ¯å‘é€ä¸€ä¸ªè¯·æ±‚å‘bindqueueä¸­å‹å…¥ä¸€ä¸ªæ•°æ®
             log.debug("study", "++bindqueue.put  FOR q ++")
             self.writeContent(ident, 0x0, code, data)
         
         try:
             log.debug("study", "wait_code:" + str(code))
-            return queue.get(1, timeout)  #ÏòĞéÄâ»ú·¢³öÖ¸ÁîºóÒ»Ö±´¦ÓÚµÈ´ı×´Ì¬£¬ÖªµÀqueue¶ÓÁĞÖĞ³öÏÖ·µ»ØĞÅÏ¢£¬½ÓÏÂÀ´´¦Àí
+            return queue.get(1, timeout)  #å‘è™šæ‹Ÿæœºå‘å‡ºæŒ‡ä»¤åä¸€ç›´å¤„äºç­‰å¾…çŠ¶æ€ï¼ŒçŸ¥é“queueé˜Ÿåˆ—ä¸­å‡ºç°è¿”å›ä¿¡æ¯ï¼Œæ¥ä¸‹æ¥å¤„ç†
         except EmptyQueue:
             return None, None
 
@@ -311,15 +311,15 @@ class Connection(Thread):
     ################################################################# THREAD API
     
     def start(self):
-        'performs handshaking and solicits[¿ÒÇó] configuration information'
-        self.daemon = True  #ÊØ»¤Ïß³Ì
+        'performs handshaking and solicits[æ³æ±‚] configuration information'
+        self.daemon = True  #å®ˆæŠ¤çº¿ç¨‹
 
-        if not self.initialized: #Èç¹ûÎªfalse³õÊ¼»¯ÉĞÎ´Íê³É£¬Íê³ÉÏÂÃæ³õÊ¼»¯¹¤×÷
+        if not self.initialized: #å¦‚æœä¸ºfalseåˆå§‹åŒ–å°šæœªå®Œæˆï¼Œå®Œæˆä¸‹é¢åˆå§‹åŒ–å·¥ä½œ
             self.writeHandshake()
             self.readHandshake()
             self.writeIdSzReq()
             self.readIdSzRes()
-            self.initialized = True #È·ÈÏÍê³É³õÊ¼»°
+            self.initialized = True #ç¡®è®¤å®Œæˆåˆå§‹è¯
             Thread.start(self)
         return None
 

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+ï»¿#!/usr/bin/env python
 # -*- coding: utf-8 -*- 
  
  ## Copyright 2011, IOActive, Inc. All rights reserved.
@@ -28,25 +28,33 @@ def find_last_method_line(source, first_line):
 @andbug.command.action('<class-path> [<method-query>]')
 def dump(ctxt, cpath, mquery=None):
     'dumps methods using original sources or apktool sources' 
+    
     cpath, mname, mjni = andbug.options.parse_mquery(cpath, mquery)
     for method in ctxt.sess.classes(cpath).methods(name=mname, jni=mjni):
         source = False
         #print "method.firstLoc.line="+ str(method.firstLoc.line)
-        klass = method.klass.name           
+        klass = method.klass.name          
 
-        first_line = method.firstLoc.line #¶ÔÓÚcom.example.test.MainActivity.test() first_lineµÄÖµÊÇ33
+
+        first_line = method.firstLoc.line #å¯¹äºcom.example.test.MainActivity.test() first_lineçš„å€¼æ˜¯33
         if first_line is None:
             print '!! could not determine first line of', method
             continue
         
-        source = andbug.source.load_source(klass) #ÓÃÒ»¸ömapÀàĞÍ±£´æÔ´´úÂë
+        source = andbug.source.load_source(klass) #ç”¨ä¸€ä¸ªmapç±»å‹ä¿å­˜æºä»£ç 
         if not source:
             print '!! could not find source for', klass
             continue
 
         last_line = method.lastLoc.line or find_last_method_line(source, first_line)
         if last_line is False:
+            if method.lineTable!=None:
+                lineTable=sorted(method.lineTable.iteritems(), key=lambda asd:asd[0], reverse=True)
+         
+                last_line = lineTable[0][0]                
+
+        if last_line is False:
             print '!! could not determine last line of', method
             continue
 
-        andbug.source.dump_source(source[first_line:last_line], str(method)) #½«Ô´´úÂëÊä³ö
+        andbug.source.dump_source(source[first_line:last_line], str(method)) #å°†æºä»£ç è¾“å‡º

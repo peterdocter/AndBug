@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+ï»¿#!/usr/bin/env python
 # -*- coding: utf-8 -*- 
 
 
@@ -25,7 +25,7 @@ BANNER = 'AndBug (C) 2011 Scott W. Dunlop <swdunlop@gmail.com>'
 def input():
     return raw_input('>> ')
 
-#ÔÚÕâÀï½ÓÊÕÓÃ»§³öÈëµÄÃ¿Ò»¸öÃüÁî
+#åœ¨è¿™é‡Œæ¥æ”¶ç”¨æˆ·å‡ºå…¥çš„æ¯ä¸€ä¸ªå‘½ä»¤
 def completer(text, state):
     available_commands = andbug.command.ACTION_MAP.keys()
     options = [x for x in available_commands if x.startswith(text)]
@@ -54,4 +54,4 @@ def shell(ctxt):
             return
         andbug.screed.pollcap()
         if cmd:
-            andbug.command.run_command(cmd, ctxt=ctxt) #ÔÚÕâÀï½ÓÊÕ¿ØÖÆÌ¨ÊäÈëµÄÃüÁî£¬ÊµÏÖ¾ßÌåµÄµ÷ÊÔ¹¤×÷¡£
+            andbug.command.run_command(cmd, ctxt=ctxt) #åœ¨è¿™é‡Œæ¥æ”¶æ§åˆ¶å°è¾“å…¥çš„å‘½ä»¤ï¼Œå®ç°å…·ä½“çš„è°ƒè¯•å·¥ä½œã€‚

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+ï»¿#!/usr/bin/env python
 # -*- coding: utf-8 -*- 
 
 ## TODO: expand the forest to use <slot>, <info>, <more>
@@ -290,7 +290,7 @@ def view_slot(tid, fid, key, path=None):
 # frame stacks.  This is consolidated into one data structure to reduce
 # round trip latency.
 #############################################################################
-#seq_frame¡¢seq_thread¡¢seq_processÊµÏÖÊı¾İÕ¹Ê¾µÄ¼¸¸öº¯Êı
+#seq_frameã€seq_threadã€seq_processå®ç°æ•°æ®å±•ç¤ºçš„å‡ ä¸ªå‡½æ•°
 #TODO: INSULATE
 def seq_frame(frame, url):
     if not url.endswith('/'):
@@ -316,7 +316,7 @@ def seq_process():
     )
 
 
-#´¦ÀíttÒ³Ãæ
+#å¤„ç†tté¡µé¢
 @bottle.route('/tt')
 def json_process():
     data = json.dumps(seq_process())
@@ -329,7 +329,7 @@ def json_process():
 # forest for efficiency.
 #############################################################################
 
-#´¦ÀíÊ×Ò³ÃæµÄº¯Êı
+#å¤„ç†é¦–é¡µé¢çš„å‡½æ•°
 @bottle.route('/')
 def frontend():
     return bottle.template('frontend', forest=json.dumps(seq_process()))
