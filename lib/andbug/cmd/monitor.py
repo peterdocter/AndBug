@@ -123,7 +123,12 @@ def HookGoGoGo(ctxt, hookFailedInfor):
     参数：hookFailedInfor 记录hook失败的函数列表
     返回值：
     '''
+    if hookFailedInfor==None:
+        return False, None
+    
     newHookFailedInfor=[]
+    
+    
     for funInfor in hookFailedInfor:
         monitorType = funInfor["monitorType"]
         cpath = funInfor["cpath"]
@@ -221,7 +226,7 @@ def monitor(ctxt, monitor_log_file_path="1111", monitor_file_md5="00000", task_f
     
     for i in range(0,5):
         flag, newUnhookFunList = HookGoGoGo(ctxt, unhookFunList)
-        print "i=%d  flag=%s len=%d"%(i, flag, len(newUnhookFunList))
+        #print "i=%d  flag=%s len=%d"%(i, flag, len(newUnhookFunList))
         unhookFunList = newUnhookFunList
     
     andbug.screed.section('Setting Hooks sucessful')
