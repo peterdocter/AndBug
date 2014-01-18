@@ -1,4 +1,4 @@
-﻿#add by sq.luo
+#add by sq.luo
 import andbug.command, andbug.screed
 import andbug.vm
 

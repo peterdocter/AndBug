@@ -1,4 +1,4 @@
-﻿## Copyright 2011, Felipe Barriga Richards <spam@felipebarriga.cl>.
+## Copyright 2011, Felipe Barriga Richards <spam@felipebarriga.cl>.
 ##                 All rights reserved.
 ##
 ## AndBug is free software: you can redistribute it and/or modify it under

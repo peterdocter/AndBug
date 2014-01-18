@@ -58,11 +58,11 @@ char *jdwp_en_errors[] = {
 #define REQUIRE_LEN(n) if ((buf->len - buf->ofs) < n) return JDWP_NEED_LEN;
 
 /*
-º¯Êı¹¦ÄÜ£ºÅĞ¶Ïjdwp_bufferµÄbufÊÇ·ñ¿ÉÒÔÂú×ã³¤¶ÈÒªÇó£¬²»Âú×ãÔò¶Ôbuf½øĞĞÀ©Õ¹
-jdwp_buffer* buf µ±Ç°µÄbufµÄÖ¸Õë
-int req ËùĞèÒªµÄ¿Õ¼äµÄ³¤¶È
-·µ»ØÖµ£ºº¯Êıµ÷ÓÃÕı³£·µ»Ø0£¬µ÷ÓÃÒì³£·µ»ØJDWP_HEAP_FAULT
-Âú×ãÒªÇó»òÀ©Õ¹³É¹¦·µ»Ø0£¬ÖØĞÂÉêÇë¿Õ¼äÊ§°Ü·µ»ØJDWP_HEAP_FAULT
+å‡½æ•°åŠŸèƒ½ï¼šåˆ¤æ–­jdwp_bufferçš„bufæ˜¯å¦å¯ä»¥æ»¡è¶³é•¿åº¦è¦æ±‚ï¼Œä¸æ»¡è¶³åˆ™å¯¹bufè¿›è¡Œæ‰©å±•
+jdwp_buffer* buf å½“å‰çš„bufçš„æŒ‡é’ˆ
+int req æ‰€éœ€è¦çš„ç©ºé—´çš„é•¿åº¦
+è¿”å›å€¼ï¼šå‡½æ•°è°ƒç”¨æ­£å¸¸è¿”å›0ï¼Œè°ƒç”¨å¼‚å¸¸è¿”å›JDWP_HEAP_FAULT
+æ»¡è¶³è¦æ±‚æˆ–æ‰©å±•æˆåŠŸè¿”å›0ï¼Œé‡æ–°ç”³è¯·ç©ºé—´å¤±è´¥è¿”å›JDWP_HEAP_FAULT
 */
 int jdwp_expand( jdwp_buffer* buf, int req ){
 	int cap = buf->cap;
@@ -81,11 +81,11 @@ again:
 }
 
 /*
-º¯Êı¹¦ÄÜ£ºÔÚjdwp_buffer´æÈë×Ö·û´®Êı¾İ
-²ÎÊı£º	jdwp_buffer* buf  Ô­buf½á¹¹Ìå±äÁ¿
-		uint32_t size	¼Æ»®×·¼ÓµÄ×Ö·û´®µÄ³¤¶È
-		char* data Òª´æÈëµÄ×Ö·û´®Ö¸Õë
-·µ»ØÖµ£º·µ»Ø0
+å‡½æ•°åŠŸèƒ½ï¼šåœ¨jdwp_bufferå­˜å…¥å­—ç¬¦ä¸²æ•°æ®
+å‚æ•°ï¼š	jdwp_buffer* buf  åŸbufç»“æ„ä½“å˜é‡
+		uint32_t size	è®¡åˆ’è¿½åŠ çš„å­—ç¬¦ä¸²çš„é•¿åº¦
+		char* data è¦å­˜å…¥çš„å­—ç¬¦ä¸²æŒ‡é’ˆ
+è¿”å›å€¼ï¼šè¿”å›0
 */
 int jdwp_pack_str( jdwp_buffer* buf, uint32_t size, char* data ){
 	REQUIRE_CAP(size + 4);
@@ -95,10 +95,10 @@ int jdwp_pack_str( jdwp_buffer* buf, uint32_t size, char* data ){
     return 0;
 }
 /*
-º¯Êı¹¦ÄÜ£ºÔÚjdwp_buffer×·¼ÓÒ»¸ö×Ö½ÚµÄÊı¾İ
-²ÎÊı£º	jdwp_buffer* buf  Ô­buf½á¹¹Ìå±äÁ¿		
-		uint8_t byte Ôö¼ÓµÄÊı¾İÄÚÈİ
-·µ»ØÖµ£º·µ»Ø0
+å‡½æ•°åŠŸèƒ½ï¼šåœ¨jdwp_bufferè¿½åŠ ä¸€ä¸ªå­—èŠ‚çš„æ•°æ®
+å‚æ•°ï¼š	jdwp_buffer* buf  åŸbufç»“æ„ä½“å˜é‡		
+		uint8_t byte å¢åŠ çš„æ•°æ®å†…å®¹
+è¿”å›å€¼ï¼šè¿”å›0
 */
 int jdwp_pack_u8( jdwp_buffer* buf, uint8_t byte){
 	REQUIRE_CAP(1);
@@ -109,7 +109,7 @@ int jdwp_pack_u8( jdwp_buffer* buf, uint8_t byte){
 
 int jdwp_pack_u16( jdwp_buffer* buf, uint16_t word ){
 	REQUIRE_CAP(2);
-	*(uint16_t*)(buf->data + buf->len) = htons(word);  //¸Ä±ä×Ö½ÚÅÅĞò
+	*(uint16_t*)(buf->data + buf->len) = htons(word);  //æ”¹å˜å­—èŠ‚æ’åº
 	buf->len += 2;
 	return 0;
 }
@@ -128,10 +128,10 @@ int jdwp_pack_u64( jdwp_buffer* buf, uint64_t octet ){
 	return 0;
 }
 /*
-º¯Êı¹¦ÄÜ£º´Óbuf½á¹¹ÌåÖĞÌáÈ¡³öÒ»¸ö×Ö½ÚµÄÊı¾İ
-²ÎÊı£º	jdwp_buffer* buf  ½á¹¹ÌåÊı¾İ
-		uint8_t* byte	±£´æÌáÈ¡³öÀ´µÄÒ»¸ö×Ö½ÚÊı¾İµÄÖ¸Õë±äÁ¿
-·µ»ØÖµ£º·µ»Ø0
+å‡½æ•°åŠŸèƒ½ï¼šä»bufç»“æ„ä½“ä¸­æå–å‡ºä¸€ä¸ªå­—èŠ‚çš„æ•°æ®
+å‚æ•°ï¼š	jdwp_buffer* buf  ç»“æ„ä½“æ•°æ®
+		uint8_t* byte	ä¿å­˜æå–å‡ºæ¥çš„ä¸€ä¸ªå­—èŠ‚æ•°æ®çš„æŒ‡é’ˆå˜é‡
+è¿”å›å€¼ï¼šè¿”å›0
 */
 int jdwp_unpack_u8( jdwp_buffer* buf, uint8_t* byte){
 	REQUIRE_LEN(1);
@@ -163,7 +163,7 @@ int jdwp_unpack_u64( jdwp_buffer* buf, uint64_t* octet ){
 int jdwp_unpack_str( jdwp_buffer* buf, uint32_t *size, char** data ){
     uint32_t sz;
     int err = jdwp_unpack_u32(buf, &sz);
-    if (err) return err;  //Ã»ÓĞ×÷ÓÃ£¬errµÄÖ»ÓÀÔ¶ÊÇ0£¬ÓÀÔ¶²»»áÖ´ĞĞ¡°return err;¡± Óï¾ä
+    if (err) return err;  //æ²¡æœ‰ä½œç”¨ï¼Œerrçš„åªæ°¸è¿œæ˜¯0ï¼Œæ°¸è¿œä¸ä¼šæ‰§è¡Œâ€œreturn err;â€ è¯­å¥
     REQUIRE_LEN(sz);
     *size = sz;
     *data = buf->data + buf->ofs;
@@ -172,11 +172,11 @@ int jdwp_unpack_str( jdwp_buffer* buf, uint32_t *size, char** data ){
 }
 
 /*
-º¯Êı¹¦ÄÜ£ºÌí¼ÓÒ»¸öidÖµµ½buf½á¹¹ÌåÖĞ
-²ÎÊı£º	jdwp_buffer* buf buf±äÁ¿µÄÖ¸Õë
-		uint64_t id Òª±£´æµÄidµÄÖµ
-		uint8_t sz  idÊı¾İ×¼±¸Õ¼ÓÃbufÖĞÄÚ´æ¿Õ¼äµÄ³¤¶È
-·µ»ØÖµ£ºÌí¼Ó³É¹¦·µ»Ø0£¬·ñÔò·µ»ØJDWP_SZ_UNSUPPORTE
+å‡½æ•°åŠŸèƒ½ï¼šæ·»åŠ ä¸€ä¸ªidå€¼åˆ°bufç»“æ„ä½“ä¸­
+å‚æ•°ï¼š	jdwp_buffer* buf bufå˜é‡çš„æŒ‡é’ˆ
+		uint64_t id è¦ä¿å­˜çš„idçš„å€¼
+		uint8_t sz  idæ•°æ®å‡†å¤‡å ç”¨bufä¸­å†…å­˜ç©ºé—´çš„é•¿åº¦
+è¿”å›å€¼ï¼šæ·»åŠ æˆåŠŸè¿”å›0ï¼Œå¦åˆ™è¿”å›JDWP_SZ_UNSUPPORTE
 */
 int jdwp_pack_id( jdwp_buffer* buf, uint64_t id, uint8_t sz ){
 	switch (sz){
@@ -211,26 +211,26 @@ int jdwp_unpack_id( jdwp_buffer* buf, uint64_t* id, uint8_t sz ){
 
 
 /*
-º¯Êı¹¦ÄÜ£º³õÊ¼»¯Ò»¸öjdwp bufµÄ½á¹¹Ìå
-²ÎÊı£º	jdwp_buffer* buf Ä¿±êbuf½á¹¹Ìå
-		char* data		×¼±¸¼ÓÈëbufµÄÊı¾İ
-		int len		dataÊı¾İµÄ³¤¶È
-·µ»ØÖµ£ºµ÷ÓÃ³É¹¦·µ»Ø0£¬µ÷ÓÃÒì³£·µ»ØJDWP_HEAP_FAULT
+å‡½æ•°åŠŸèƒ½ï¼šåˆå§‹åŒ–ä¸€ä¸ªjdwp bufçš„ç»“æ„ä½“
+å‚æ•°ï¼š	jdwp_buffer* buf ç›®æ ‡bufç»“æ„ä½“
+		char* data		å‡†å¤‡åŠ å…¥bufçš„æ•°æ®
+		int len		dataæ•°æ®çš„é•¿åº¦
+è¿”å›å€¼ï¼šè°ƒç”¨æˆåŠŸè¿”å›0ï¼Œè°ƒç”¨å¼‚å¸¸è¿”å›JDWP_HEAP_FAULT
 */
 int jdwp_prepare( jdwp_buffer* buf, char* data, int len )
 {
 	if (buf->data == NULL)
 	{
-		//Ã»ÓĞÉêÇëdata¿Õ¼ä£¬ÔòÔÚÕâÀïÉêÇë
+		//æ²¡æœ‰ç”³è¯·dataç©ºé—´ï¼Œåˆ™åœ¨è¿™é‡Œç”³è¯·
 		buf->data = malloc(len);
 	}
 	else if (len > buf->cap)
 	{
-		//ÉêÇëÁË¿Õ¼ä£¬µ«ÊÇbufÄÜÈİÄÉµÄ³¤¶È£¬Ğ¡ÓÚµ±Ç°Òª¼ÓÈëµÄÊı¾İµÄ³¤¶È£¬ÔòÖØĞÂÉêÇëlen³¤¶ÈµÄ¿Õ¼ä
+		//ç”³è¯·äº†ç©ºé—´ï¼Œä½†æ˜¯bufèƒ½å®¹çº³çš„é•¿åº¦ï¼Œå°äºå½“å‰è¦åŠ å…¥çš„æ•°æ®çš„é•¿åº¦ï¼Œåˆ™é‡æ–°ç”³è¯·lené•¿åº¦çš„ç©ºé—´
 		buf->data = realloc(buf->data, len);
 	}; // we do not collapse the heap, ever.. call it a character flaw.
 
-	if (buf->data == NULL) return JDWP_HEAP_FAULT;  //Èç¹ûbuf->dataÎªNULL£¬Ôò¿Õ¼äÃ»ÓĞÉêÇë³É¹¦·µ»ØJDWP_HEAP_FAULT
+	if (buf->data == NULL) return JDWP_HEAP_FAULT;  //å¦‚æœbuf->dataä¸ºNULLï¼Œåˆ™ç©ºé—´æ²¡æœ‰ç”³è¯·æˆåŠŸè¿”å›JDWP_HEAP_FAULT
 
 	if (data == NULL)
 	{
@@ -248,9 +248,9 @@ int jdwp_prepare( jdwp_buffer* buf, char* data, int len )
 }
 
 /*
-º¯Êı¹¦ÄÜ£º¾»»¯jdwp_buffer½á¹¹Ìå£¬½«dataÖĞÖ¸ÏòµÄÄÚÈİ¿Õ¼äÊÍ·Å
-²ÎÊı£ºjdwp_buffer* buf ½á¹¹Ö¸Õë±äÁ¿
-·µ»ØÖµ£ºvoid
+å‡½æ•°åŠŸèƒ½ï¼šå‡€åŒ–jdwp_bufferç»“æ„ä½“ï¼Œå°†dataä¸­æŒ‡å‘çš„å†…å®¹ç©ºé—´é‡Šæ”¾
+å‚æ•°ï¼šjdwp_buffer* buf ç»“æ„æŒ‡é’ˆå˜é‡
+è¿”å›å€¼ï¼švoid
 */
 void jdwp_purge( jdwp_buffer* buf )
 {
@@ -260,11 +260,11 @@ void jdwp_purge( jdwp_buffer* buf )
 }
 
 /*
-º¯Êı¹¦ÄÜ£º¼ÓÈëÒ»¸öpackÊı¾İ
-²ÎÊı£º	jdwp_buffer* buf buf½á¹¹ÌåÖ¸Õë
-		char format Ëù¼ÓÈëÊı¾İµÄ¸ñÊ½
-		uint64_t value Òª¼ÓÈëµÄÊı¾İµÄÖµ
-·µ»ØÖµ£ºµ÷ÓÃ³É¹¦·µ»Ø0£¬µ÷ÓÃÊ§°Ü·µ»ØJDWP_OP_UNSUPPORTED
+å‡½æ•°åŠŸèƒ½ï¼šåŠ å…¥ä¸€ä¸ªpackæ•°æ®
+å‚æ•°ï¼š	jdwp_buffer* buf bufç»“æ„ä½“æŒ‡é’ˆ
+		char format æ‰€åŠ å…¥æ•°æ®çš„æ ¼å¼
+		uint64_t value è¦åŠ å…¥çš„æ•°æ®çš„å€¼
+è¿”å›å€¼ï¼šè°ƒç”¨æˆåŠŸè¿”å›0ï¼Œè°ƒç”¨å¤±è´¥è¿”å›JDWP_OP_UNSUPPORTED
 */
 int jdwp_pack( jdwp_buffer* buf, char format, uint64_t value )
 {
@@ -298,7 +298,7 @@ int jdwp_pack( jdwp_buffer* buf, char format, uint64_t value )
 }
 
 /*
-º¯Êı¹¦ÄÜ£º¸ù¾İ¸ñÊ½±íÊö·û¶ÔÊı¾İ½øĞĞ×ª»»
+å‡½æ•°åŠŸèƒ½ï¼šæ ¹æ®æ ¼å¼è¡¨è¿°ç¬¦å¯¹æ•°æ®è¿›è¡Œè½¬æ¢
 */
 int jdwp_unpack( jdwp_buffer* buf, char format, uint64_t *value )
 {	
