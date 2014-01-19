@@ -532,6 +532,7 @@ class Location(SessionElement):
     @property
     def slots(self):
         log.debug("study", "In Location slots")
+        log.debug("study", "self.native=" + str(self.native))
         l = self.loc
         def filter_slots():
             for slot in self.method.slots:                
@@ -692,6 +693,7 @@ class Method(SessionElement):
         log.debug("study", "In Method.load_slot_table classTypeId=" + str(tid) + "\t mid=" + str(mid))
         log.debug("study", "call jdwp 0x06 05")
         code, buf = conn.request(0x0605, data, g_jdwp_request_timeout)
+        log.debug("study", "code="+ str(code))
         if code != 0: raise RequestError(code)
     
         act, sct = buf.unpack('ii')  #获取参数的个数，获取自变量的个数
@@ -730,7 +732,7 @@ class Method(SessionElement):
         mid = self.mid
         bytecode = ''
         data = conn.buffer().pack('om', tid, mid)
-        log.debug("study", "call jdwp 0x06 05")
+        log.debug("study", "call jdwp 0x06 03")
         code, buf = conn.request(0x0603, data, g_jdwp_request_timeout)
         if code !=0: raise RequestError(code)
         

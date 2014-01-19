@@ -19,6 +19,7 @@
 
 import andbug.command, andbug.screed, andbug.options
 from Queue import Queue
+from andbug import log
 
 '''
 该命令用来跟踪触发断点时各参数的信息
@@ -47,6 +48,7 @@ def report_hit(t):
             if f.native:  #判断堆栈中函数的类型，是否是内部函数。如dalvik.system.NativeStart.main([Ljava/lang/String;)V <native>
                 name += ' <native>'
             with andbug.screed.refer(name):
+                log.debug("study", "function name:" + str(name) )
                 parse_frame_detail(f)
                
                

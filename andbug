@@ -16,8 +16,8 @@
 
 'this script executes command modules found in andbug.commands'
 import os, os.path, sys, traceback, atexit
-sys.path.append("/home/anbc/test/AndBug/lib")
-#sys.path.append("/home/anbc/work_folder/andbug_work/andbug/lib") 
+
+
 def panic(why, exit=True, exc=False):
     sys.stderr.write("!! %s\n" % (why,))
     sys.stderr.flush()
@@ -25,6 +25,19 @@ def panic(why, exit=True, exc=False):
         traceback.print_exc()
     if exit:
         sys.exit(-1)
+
+def cur_file_dir():
+    #获取脚本路径
+    path = sys.path[0]
+    #判断为脚本文件还是py2exe编译后的文件，如果是脚本文件，则返回的是脚本的目录，
+    #如果是py2exe编译后的文件，则返回的是编译后的文件路径
+    if os.path.isdir(path):
+        return path
+    elif os.path.isfile(path):
+        return os.path.dirname(path)
+
+sys.path.append(cur_file_dir()+"/lib")
+#sys.path.append("/home/anbc/work_folder/andbug_work/andbug/lib") 
 
 def main(args):
     import andbug, andbug.cmd, andbug.command

@@ -1,0 +1,10 @@
+eclipse.preferences.version=1
+encoding//lib/andbug/cmd/break-detail.py=utf-8
+encoding//lib/andbug/cmd/break.py=utf-8
+encoding//lib/andbug/cmd/inspect.py=utf-8
+encoding//lib/andbug/cmd/method_detail.py=utf-8
+encoding//lib/andbug/log.py=utf-8
+encoding//lib/andbug/proto.py=utf-8
+encoding//lib/andbug/util.py=utf-8
+encoding//lib/andbug/vm.py=utf-8
+encoding/andbug=utf-8
